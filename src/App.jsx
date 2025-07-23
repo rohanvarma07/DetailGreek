@@ -3,12 +3,16 @@ import './App.css';
 import cartIcon from './assets/shopping-cart.png';
 import img from './assets/DG.png';
 import detail from './assets/detail.png';
-import video from './assets/car-wash.mp4';
 import wash from './assets/wash.jpg';
 import polish from './assets/ceramic.jpg';
 import paint from './assets/paint.png';
 import interior from './assets/interior.jpg';
 import wheel from './assets/wheelalign.jpg';
+import ceramic from './assets/ceramic.png';
+import carwash from './assets/car-wash.png';
+import compound from './assets/compound.png';
+import pressure from './assets/pressure.png';
+import brush from './assets/brush.png';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -63,7 +67,7 @@ function App() {
         <p className='banner-subtext'>Your one-stop solution for all car detailing needs</p>
       </div>
       <div className="component-details">
-  <p className="component-title">Our Services</p>
+  <p className="component-title">OUR SERVICES</p>
 
   <div className="scroll-container">
     <button className="scroll-button left" onClick={() => {
@@ -104,7 +108,7 @@ function App() {
 
   <div className="container2">
     <div className="product-details">
-      <p className="product-title">New Products & Best Sellers</p>
+      <p className="product-title">NEW PRODUCTS & BEST SELLER</p>
       
       <div className="scroll-container">
         <button className="scroll-button left" onClick={() => {
@@ -156,6 +160,40 @@ function App() {
         }}>
           &#8250;
         </button>
+      </div>
+    </div>
+  </div>
+
+  <div className="container3">
+    <div className="category">
+      <div className="category-details">
+        <p className='category-title'>WE OFFER PRODUCTS</p>
+        <div className="category-container">
+        <div className="category-card">
+          <img src={ceramic} alt="Ceramic Polish" className="category-image" />
+          <p className="category-name">CERAMIC COATINGS</p>
+        </div>
+        <div className="category-card">
+          <img src={carwash} alt="Car Wash" className="category-image" />
+          <p className="category-name">CAR WASH SUPPLY & PRODUCTS</p>
+        </div>
+        <div className="category-card">
+          <img src={compound} alt="Compound" className="category-image" />
+          <p className="category-name">CUTTING PADS & COMPOUNDS</p>
+        </div>
+        <div className="category-card">
+          <img src={interior} alt="Interior Detailing" className="category-image" />
+          <p className="category-name">INTERIOR DETAILING PRODUCTS</p>
+        </div>
+        <div className="category-card">
+          <img src={pressure} alt="Pressure Washers" className="category-image" />
+          <p className="category-name">PRESSURE WASHERS</p>
+        </div>
+        <div className="category-card">
+          <img src ={brush} alt="Brushes" className="category-image" />
+          <p className="category-name">BRUSHES & TOOLS</p>
+        </div> 
+      </div>
       </div>
     </div>
   </div>
