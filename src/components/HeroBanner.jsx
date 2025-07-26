@@ -1,9 +1,13 @@
 const HeroBanner = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background with overlay */}
+      {/* Background with overlay and border blending */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
       <div className="absolute inset-0 bg-[url('./assets/ceramic.jpg')] bg-cover bg-center bg-no-repeat opacity-20"></div>
+      
+      {/* Border blending gradients */}
+      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-black/50 z-5"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-900 to-transparent z-5"></div>
       
       {/* Optimized background elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -12,11 +16,11 @@ const HeroBanner = () => {
       </div>
       
       {/* Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto pt-20 md:pt-24">
         <div className="space-y-8">
           {/* Main heading */}
           <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight">
-            <span className="block text-white mb-2">Premium</span>
+            <span className="block text-white mb-2 pt-4 md:pt-8">Premium</span>
             <span className="block bg-gradient-to-r from-yellow-400 via-yellow-500 to-blue-400 bg-clip-text text-transparent">
               Car Detailing
             </span>
@@ -64,7 +68,7 @@ const HeroBanner = () => {
       </div>
       
       {/* Optimized scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+      <div className="absolute bottom-12 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20">
         <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center group hover:border-yellow-400/50 transition-colors duration-300">
           <div className="w-1 h-3 bg-yellow-400 rounded-full mt-2 group-hover:animate-bounce"></div>
         </div>
