@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+  html {
+    background: linear-gradient(to bottom right, rgb(15 23 42), rgb(17 24 39), rgb(24 24 27));
+    min-height: 100vh;
+  }
+  
+  body {
+    background: transparent;
+    color: white;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  
+  #root {
+    min-height: 100vh;
+  }
