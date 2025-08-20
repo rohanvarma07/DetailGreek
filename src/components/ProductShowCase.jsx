@@ -1,13 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
+import ProductDetailView from "./ProductDetailView";
 
 const ProductShowCase = () => {
     const { addToCart } = useCart();
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showProductDetail, setShowProductDetail] = useState(false);
 
     const handleAddToCart = (product) => {
         addToCart(product);
-        // You can add a toast notification here in the future
     };
+
+    const handleProductView = (product) => {
+        // Enhanced product data for detailed view
+        const enhancedProduct = {
+            ...product,
+            detailedDescription: `${product.description}. This premium product is designed for professional results and easy application.`,
+            specifications: {
+                "Volume": "500ml",
+                "Application": "Manual",
+                "Coverage": "2-3 vehicles",
+                "Durability": "6 months"
+            },
+            benefits: [
+                "Professional grade quality",
+                "Easy to apply",
+                "Long-lasting results",
+                "Safe for all surfaces"
+            ],
+            usage: "Clean surface thoroughly. Apply product evenly. Allow to cure as directed. Buff to desired finish.",
+            rating: 4.6,
+            reviews: 89
+        };
+        setSelectedProduct(enhancedProduct);
+        setShowProductDetail(true);
+    };
+
+    const handleBackToProducts = () => {
+        setShowProductDetail(false);
+        setSelectedProduct(null);
+    };
+
+    // Show product detail view if a product is selected
+    if (showProductDetail && selectedProduct) {
+        return (
+            <ProductDetailView 
+                product={selectedProduct} 
+                onBack={handleBackToProducts}
+                onAddToCart={handleAddToCart}
+            />
+        );
+    }
     const products = [
         {
             id: 1,
@@ -60,93 +103,115 @@ const ProductShowCase = () => {
     ];
 
     return (
-        <section className="py-16 bg-gradient-to-b from-transparent to-slate-900/20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Section Header */}
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                        Premium Car Care <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Products</span>
-                    </h2>
-                    <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                        Discover our carefully curated collection of professional-grade car care products designed to maintain your vehicle's pristine condition
-                    </p>
-                </div>
+        <section className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+            {/* Floating Car Emojis Background */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-10 left-10 text-6xl opacity-10 blur-sm animate-bounce" style={{animationDelay: '0s', animationDuration: '6s'}}>🚗</div>
+                <div className="absolute top-32 right-20 text-5xl opacity-15 blur-sm animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}>🚙</div>
+                <div className="absolute top-64 left-1/4 text-4xl opacity-20 blur-sm animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}>🚕</div>
+                <div className="absolute top-80 right-1/3 text-6xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '3s', animationDuration: '7s'}}>🏎️</div>
+                <div className="absolute bottom-32 left-16 text-5xl opacity-15 blur-sm animate-bounce" style={{animationDelay: '4s', animationDuration: '6s'}}>🚘</div>
+                <div className="absolute bottom-20 right-10 text-4xl opacity-20 blur-sm animate-pulse" style={{animationDelay: '5s', animationDuration: '5s'}}>🚖</div>
+                <div className="hidden sm:block absolute top-1/2 left-10 text-3xl opacity-25 blur-sm animate-bounce" style={{animationDelay: '1.5s', animationDuration: '4s'}}>🧽</div>
+                <div className="hidden md:block absolute top-1/3 right-1/4 text-5xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '2.5s', animationDuration: '6s'}}>✨</div>
+            </div>
 
-                {/* Products Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {products.map((product) => (
-                        <div 
-                            key={product.id} 
-                            className={`relative group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 ${
-                                product.popular ? 'ring-2 ring-blue-400/50' : ''
-                            }`}
-                        >
-                            {/* Popular Badge */}
-                            {product.popular && (
-                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                                    <span className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                                        Most Popular
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* Product Icon */}
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                </svg>
-                            </div>
-
-                            {/* Content */}
-                            <div className="space-y-4">
-                                <div>
-                                    <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
-                                    <p className="text-gray-300 text-sm leading-relaxed">{product.description}</p>
-                                </div>
-
-                                {/* Features */}
-                                <div className="space-y-2">
-                                    {product.features.map((feature, index) => (
-                                        <div key={index} className="flex items-center text-sm text-gray-400">
-                                            <svg className="w-4 h-4 text-green-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            {feature}
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Price and CTA */}
-                                <div className="pt-4 border-t border-white/10">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className="text-2xl font-bold text-white">{product.price}</span>
-                                        <span className="text-sm text-gray-400">Starting from</span>
-                                    </div>
-                                    
-                                    <button 
-                                        onClick={() => handleAddToCart(product)}
-                                        className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Call to Action */}
-                <div className="text-center mt-16">
-                    <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-4xl mx-auto">
-                        <h3 className="text-2xl font-bold text-white mb-4">
-                            Looking for Bulk Orders?
-                        </h3>
-                        <p className="text-gray-300 mb-6">
-                            Contact us for wholesale pricing and custom product bundles for automotive professionals and enthusiasts.
+            {/* Main Content */}
+            <div className="relative z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Minimal Section Header */}
+                    <div className="text-center mb-12 sm:mb-16">
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-4 tracking-wide">
+                            Premium Car Care <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Products</span>
+                        </h2>
+                        <p className="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto font-light">
+                            Discover our carefully curated collection of professional-grade car care products
                         </p>
-                        <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-8 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
-                            Contact Sales
-                        </button>
+                    </div>
+
+                    {/* Minimal Products Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                        {products.map((product) => (
+                            <div 
+                                key={product.id} 
+                                className={`relative group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10 ${
+                                    product.popular ? 'ring-1 ring-blue-400/30' : ''
+                                }`}
+                            >
+                                {/* Minimal Popular Badge */}
+                                {product.popular && (
+                                    <div className="absolute top-3 right-3 z-10">
+                                        <span className="bg-blue-500/20 backdrop-blur-sm text-blue-300 px-2 py-1 rounded-full text-xs font-medium border border-blue-400/30">
+                                            Popular
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Minimal Product Icon */}
+                                <div className="h-32 sm:h-40 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                                    <div className="text-4xl sm:text-5xl opacity-60">
+                                        {product.id <= 2 ? '🧴' : product.id <= 4 ? '🧽' : '✨'}
+                                    </div>
+                                </div>
+
+                                {/* Minimal Content */}
+                                <div className="p-4 sm:p-6">
+                                    <div className="space-y-3 sm:space-y-4">
+                                        <div>
+                                            <h3 className="text-lg sm:text-xl font-medium text-white mb-2 line-clamp-1">{product.name}</h3>
+                                            <p className="text-gray-400 text-sm leading-relaxed line-clamp-2">{product.description}</p>
+                                        </div>
+
+                                        {/* Minimal Features */}
+                                        <div className="flex flex-wrap gap-1">
+                                            {product.features.slice(0, 2).map((feature, index) => (
+                                                <span key={index} className="text-xs bg-blue-500/15 text-blue-300 px-2 py-1 rounded-full border border-blue-500/20">
+                                                    {feature}
+                                                </span>
+                                            ))}
+                                        </div>
+
+                                        {/* Minimal Price and Actions */}
+                                        <div className="pt-3 border-t border-white/10">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className="text-xl sm:text-2xl font-semibold text-blue-400">{product.price}</span>
+                                                <span className="text-xs text-gray-500">Starting from</span>
+                                            </div>
+                                            
+                                            <div className="flex gap-2">
+                                                <button 
+                                                    onClick={() => handleProductView(product)}
+                                                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm border border-white/10"
+                                                >
+                                                    View
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleAddToCart(product)}
+                                                    className="flex-1 bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm backdrop-blur-sm border border-white/10"
+                                                >
+                                                    Add to Cart
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Minimal Call to Action */}
+                    <div className="text-center mt-12 sm:mt-16">
+                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 max-w-3xl mx-auto">
+                            <h3 className="text-xl sm:text-2xl font-medium text-white mb-3 sm:mb-4">
+                                Looking for Bulk Orders?
+                            </h3>
+                            <p className="text-gray-400 mb-6 text-sm sm:text-base">
+                                Contact us for wholesale pricing and custom product bundles for automotive professionals and enthusiasts.
+                            </p>
+                            <button className="bg-gradient-to-r from-purple-600/80 to-pink-600/80 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/10">
+                                Contact Sales
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import carWash from "../assets/car-wash.png";
 import detail from "../assets/detal.png";
+import CategoryDetails from "./CategoryDetails";
 
 const SellCategory = ({ category, onCategoryClick }) => {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [showDetails, setShowDetails] = useState(false);
     const categories = [
         {
             id: 1,
@@ -34,6 +37,24 @@ const SellCategory = ({ category, onCategoryClick }) => {
         }
     ];
 
+    const handleCategoryClick = (cat) => {
+        setSelectedCategory(cat);
+        setShowDetails(true);
+        if (onCategoryClick) {
+            onCategoryClick(cat);
+        }
+    };
+
+    const handleBackToCategories = () => {
+        setShowDetails(false);
+        setSelectedCategory(null);
+    };
+
+    // Show details page if a category is selected
+    if (showDetails && selectedCategory) {
+        return <CategoryDetails category={selectedCategory} onBack={handleBackToCategories} />;
+    }
+
     return (
         <section className="py-16 bg-gradient-to-b from-transparent to-slate-900/20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +73,7 @@ const SellCategory = ({ category, onCategoryClick }) => {
                     {categories.map((cat) => (
                         <div 
                             key={cat.id}
-                            onClick={() => onCategoryClick && onCategoryClick(cat)}
+                            onClick={() => handleCategoryClick(cat)}
                             className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
                         >
                             {/* Category Image */}
@@ -88,7 +109,13 @@ const SellCategory = ({ category, onCategoryClick }) => {
 
                                 {/* View Products Button */}
                                 <div className="pt-4 border-t border-white/10">
-                                    <button className="w-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 font-semibold py-2 px-4 rounded-lg hover:from-blue-600/30 hover:to-cyan-600/30 transition-all duration-300 text-sm">
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleCategoryClick(cat);
+                                        }}
+                                        className="w-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 font-semibold py-2 px-4 rounded-lg hover:from-blue-600/30 hover:to-cyan-600/30 transition-all duration-300 text-sm"
+                                    >
                                         View Products
                                     </button>
                                 </div>
