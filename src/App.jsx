@@ -4,13 +4,15 @@ import { CartProvider } from './context/CartContext'
 import Header from './components/Header'
 import Hero from './components/hero'
 import SellCategory from './components/SellCategory'
-import ProductShowcase from './components/ProductShowCase'
+import ProductShowCaseWrapper from './components/ProductShowCaseWrapper'
+import CategoryDetails from './components/CategoryDetails'
 import Footer from './components/Footer'
 import Cart from './components/Cart'
 import About from './components/About'
 
 function App() {
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'cart', or 'about'
+  const [currentView, setCurrentView] = useState('home'); // 'home', 'cart', 'about', or 'category'
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const showCart = () => {
     setCurrentView('cart');
@@ -18,10 +20,16 @@ function App() {
 
   const showHome = () => {
     setCurrentView('home');
+    setSelectedCategory(null);
   };
 
   const showAbout = () => {
     setCurrentView('about');
+  };
+
+  const showCategoryDetails = (category) => {
+    setSelectedCategory(category);
+    setCurrentView('category');
   };
 
   return (
@@ -52,10 +60,10 @@ function App() {
               <Hero />
             </div>
             <div id="categories">
-              <SellCategory />
+              <SellCategory onCategoryClick={showCategoryDetails} />
             </div>
             <div id="products">
-              <ProductShowcase />
+              <ProductShowCaseWrapper />
             </div>
             <div id="contact">
               <Footer />
@@ -77,6 +85,23 @@ function App() {
               </div>
             </div>
             <Cart onBackToShop={showHome} />
+          </div>
+        ) : currentView === 'category' ? (
+          <div>
+            <div className="pt-20 pb-4">
+              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <button 
+                  onClick={showHome}
+                  className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors mb-4"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Back to Categories
+                </button>
+              </div>
+            </div>
+            <CategoryDetails category={selectedCategory} onBack={showHome} />
           </div>
         ) : (
           <About onBackToHome={showHome} />

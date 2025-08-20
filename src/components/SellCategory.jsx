@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import carWash from "../assets/car-wash.png";
 import detail from "../assets/detal.png";
-import CategoryDetails from "./CategoryDetails";
 
-const SellCategory = ({ category, onCategoryClick }) => {
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [showDetails, setShowDetails] = useState(false);
+const SellCategory = ({ onCategoryClick }) => {
     const categories = [
         {
             id: 1,
@@ -38,22 +35,10 @@ const SellCategory = ({ category, onCategoryClick }) => {
     ];
 
     const handleCategoryClick = (cat) => {
-        setSelectedCategory(cat);
-        setShowDetails(true);
         if (onCategoryClick) {
             onCategoryClick(cat);
         }
     };
-
-    const handleBackToCategories = () => {
-        setShowDetails(false);
-        setSelectedCategory(null);
-    };
-
-    // Show details page if a category is selected
-    if (showDetails && selectedCategory) {
-        return <CategoryDetails category={selectedCategory} onBack={handleBackToCategories} />;
-    }
 
     return (
         <section className="py-16 bg-gradient-to-b from-transparent to-slate-900/20">

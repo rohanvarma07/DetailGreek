@@ -322,46 +322,32 @@ const CategoryDetails = ({ category, onBack }) => {
                     </div>
 
                     {/* Minimal Products Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {categoryProducts.map((product) => (
                             <div
                                 key={product.id}
-                                className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10 cursor-pointer"
+                                className="group bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:from-white/8 hover:via-blue-500/8 hover:to-cyan-500/8 transition-all duration-300 cursor-pointer"
                                 onClick={() => handleProductClick(product)}
                             >
-                                {/* Minimal Product Image */}
-                                <div className="relative overflow-hidden h-40 sm:h-48">
-                                    <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                                        <div className="text-4xl sm:text-5xl opacity-60">
-                                            {product.id <= 3 ? '🧴' : product.id <= 6 ? '🧽' : product.id <= 10 ? '✨' : '🪑'}
-                                        </div>
-                                    </div>
-                                    <div className="absolute top-3 right-3 bg-black/20 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full border border-white/20">
-                                        ⭐ {product.rating}
+                                {/* Simple Product Image Area */}
+                                <div className="h-48 bg-gradient-to-br from-white/5 via-blue-400/10 to-cyan-400/10 flex items-center justify-center">
+                                    <div className="text-5xl opacity-50">
+                                        {product.id <= 3 ? '🧴' : product.id <= 6 ? '🧽' : product.id <= 10 ? '✨' : '🪑'}
                                     </div>
                                 </div>
 
-                                {/* Minimal Product Info */}
-                                <div className="p-4 sm:p-6">
-                                    <h3 className="text-lg sm:text-xl font-medium text-white mb-2 group-hover:text-blue-400 transition-colors duration-300 line-clamp-1">
+                                {/* Simple Product Info */}
+                                <div className="p-6">
+                                    <h3 className="text-lg font-medium text-white mb-2 line-clamp-1">
                                         {product.name}
                                     </h3>
-                                    <p className="text-gray-400 text-sm mb-4 leading-relaxed line-clamp-2">
+                                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">
                                         {product.description}
                                     </p>
                                     
-                                    {/* Minimal Features */}
-                                    <div className="flex gap-2 mb-4 overflow-x-auto">
-                                        {product.features.slice(0, 2).map((feature, index) => (
-                                            <span key={index} className="text-xs bg-blue-500/15 text-blue-300 px-2 py-1 rounded-full whitespace-nowrap border border-blue-500/20">
-                                                {feature}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    
-                                    {/* Price and Action */}
+                                    {/* Price and Simple Button */}
                                     <div className="flex items-center justify-between">
-                                        <span className="text-xl sm:text-2xl font-semibold text-blue-400">
+                                        <span className="text-xl font-medium text-white">
                                             {product.price}
                                         </span>
                                         <button 
@@ -369,7 +355,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                                 e.stopPropagation();
                                                 handleAddToCart(product);
                                             }}
-                                            className="bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm backdrop-blur-sm border border-white/10"
+                                            className="bg-gradient-to-r from-white/10 via-blue-500/10 to-white/10 hover:from-white/20 hover:via-blue-500/15 hover:to-white/20 text-white py-2 px-4 rounded-xl transition-all duration-300 text-sm border border-white/10"
                                         >
                                             Add
                                         </button>
@@ -379,15 +365,15 @@ const CategoryDetails = ({ category, onBack }) => {
                         ))}
                     </div>
 
-                    {/* Minimal Empty State */}
+                    {/* Simple Empty State */}
                     {categoryProducts.length === 0 && (
-                        <div className="text-center py-12 sm:py-16">
-                            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 sm:p-12 max-w-md mx-auto">
-                                <div className="text-4xl mb-4 opacity-60">🚧</div>
-                                <h3 className="text-xl sm:text-2xl font-light text-white mb-3">
+                        <div className="text-center py-16">
+                            <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-12 max-w-md mx-auto">
+                                <div className="text-4xl mb-4 opacity-50">🚧</div>
+                                <h3 className="text-xl font-medium text-white mb-3">
                                     Coming Soon
                                 </h3>
-                                <p className="text-gray-400 text-sm sm:text-base">
+                                <p className="text-gray-400 text-sm">
                                     New products arriving soon
                                 </p>
                             </div>

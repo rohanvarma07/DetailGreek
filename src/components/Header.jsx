@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
-const Header = ({ title = "Detail Greek", onCartClick, onShowCart, onShowAbout, onShowHome }) => {
+const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { getCartItemsCount } = useCart();

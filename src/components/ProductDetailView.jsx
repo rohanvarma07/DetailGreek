@@ -46,8 +46,8 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                         {/* Minimal Product Image */}
                         <div className="space-y-4">
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden h-64 sm:h-80 lg:h-96 flex items-center justify-center">
-                                <div className="text-6xl sm:text-8xl opacity-60">
+                            <div className="bg-gradient-to-br from-white/5 via-blue-400/10 to-cyan-400/10 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden h-64 sm:h-80 lg:h-96 flex items-center justify-center">
+                                <div className="text-6xl sm:text-8xl opacity-50">
                                     {product.id <= 3 ? '🧴' : product.id <= 6 ? '🧽' : product.id <= 10 ? '✨' : '🪑'}
                                 </div>
                             </div>
@@ -73,9 +73,9 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                             </div>
 
                             {/* Minimal Price and Add to Cart */}
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6">
+                            <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6">
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                                    <span className="text-2xl sm:text-3xl font-semibold text-blue-400">
+                                    <span className="text-2xl sm:text-3xl font-medium text-white">
                                         {product.price}
                                     </span>
                                     <div className="flex items-center space-x-3">
@@ -89,7 +89,7 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                                                 </svg>
                                             </button>
-                                            <span className="text-white font-semibold w-8 text-center text-sm">{quantity}</span>
+                                            <span className="text-white font-medium w-8 text-center text-sm">{quantity}</span>
                                             <button
                                                 onClick={() => setQuantity(quantity + 1)}
                                                 className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors border border-white/10"
@@ -103,14 +103,14 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                 </div>
                                 <button
                                     onClick={handleAddToCart}
-                                    className="w-full bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 sm:py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/10"
+                                    className="w-full bg-gradient-to-r from-white/10 via-blue-500/10 to-white/10 hover:from-white/20 hover:via-blue-500/15 hover:to-white/20 text-white font-medium py-3 sm:py-4 px-6 rounded-xl transition-all duration-300 border border-white/10"
                                 >
                                     Add to Cart - {product.price}
                                 </button>
                             </div>
 
                             {/* Minimal Key Features */}
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6">
+                            <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6">
                                 <h3 className="text-lg sm:text-xl font-medium text-white mb-4">Features</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {product.features.map((feature, index) => (
@@ -126,7 +126,7 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
 
                     {/* Minimal Detailed Information Tabs */}
                     <div className="mt-12 lg:mt-16">
-                        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden">
+                        <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden">
                             {/* Minimal Tab Navigation */}
                             <div className="flex flex-wrap border-b border-white/10">
                                 {[

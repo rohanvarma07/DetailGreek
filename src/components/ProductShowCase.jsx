@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useCart } from "../context/CartContext";
-import ProductDetailView from "./ProductDetailView";
 
-const ProductShowCase = () => {
+const ProductShowCase = ({ onProductView }) => {
     const { addToCart } = useCart();
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [showProductDetail, setShowProductDetail] = useState(false);
 
     const handleAddToCart = (product) => {
         addToCart(product);
@@ -32,25 +29,12 @@ const ProductShowCase = () => {
             rating: 4.6,
             reviews: 89
         };
-        setSelectedProduct(enhancedProduct);
-        setShowProductDetail(true);
+        
+        // Call the parent handler to show product details in a new page
+        if (onProductView && typeof onProductView === 'function') {
+            onProductView(enhancedProduct);
+        }
     };
-
-    const handleBackToProducts = () => {
-        setShowProductDetail(false);
-        setSelectedProduct(null);
-    };
-
-    // Show product detail view if a product is selected
-    if (showProductDetail && selectedProduct) {
-        return (
-            <ProductDetailView 
-                product={selectedProduct} 
-                onBack={handleBackToProducts}
-                onAddToCart={handleAddToCart}
-            />
-        );
-    }
     const products = [
         {
             id: 1,
@@ -140,7 +124,7 @@ const ProductShowCase = () => {
                             >
                                 {/* Minimal Popular Badge */}
                                 {product.popular && (
-                                    <div className="absolute top-3 right-3 z-10">
+                                    <div className="absolute top-3 right-3 z-20">
                                         <span className="bg-blue-500/20 backdrop-blur-sm text-blue-300 px-2 py-1 rounded-full text-xs font-medium border border-blue-400/30">
                                             Popular
                                         </span>
@@ -178,16 +162,22 @@ const ProductShowCase = () => {
                                                 <span className="text-xs text-gray-500">Starting from</span>
                                             </div>
                                             
-                                            <div className="flex gap-2">
+                                            <div className="flex flex-col sm:flex-row gap-2">
                                                 <button 
-                                                    onClick={() => handleProductView(product)}
-                                                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm border border-white/10"
+                                                    type="button"
+                                                    onClick={() => {
+                                                        handleProductView(product);
+                                                    }}
+                                                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm border border-white/10 cursor-pointer"
                                                 >
-                                                    View
+                                                    View Details
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleAddToCart(product)}
-                                                    className="flex-1 bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm backdrop-blur-sm border border-white/10"
+                                                    type="button"
+                                                    onClick={() => {
+                                                        handleAddToCart(product);
+                                                    }}
+                                                    className="flex-1 bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm backdrop-blur-sm border border-white/10 cursor-pointer"
                                                 >
                                                     Add to Cart
                                                 </button>
