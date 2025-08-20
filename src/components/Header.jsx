@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 
-const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome }) => {
+const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, onShowLogin, onGetStarted, user, onLogout, isFirstVisit }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { getCartItemsCount } = useCart();
@@ -39,6 +39,16 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome })
     
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  const getStartedButtonText = () => {
+    if (user) {
+      return 'Shop Now';
+    } else if (isFirstVisit) {
+      return 'Explore Products ✨';
+    } else {
+      return 'Get Started';
+    }
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -102,31 +112,99 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome })
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 lg:space-x-3">
+            {/* Mobile Cart and Login - Always Visible */}
+            {isMobile && (
+              <div className="flex items-center space-x-2">
+                {/* Mobile Login/User Button */}
+                {user ? (
+                  <div className="flex items-center space-x-1">
+                    <span className="text-xs text-blue-400 font-medium">{user.email.split('@')[0]}</span>
+                    <button 
+                      onClick={onLogout}
+                      className="px-2 py-1 text-xs text-gray-400 hover:text-red-400 font-medium transition-colors duration-200"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={onShowLogin}
+                    className="px-2 py-1 text-xs text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200"
+                  >
+                    Login
+                  </button>
+                )}
+                
+                {/* Mobile Cart Button */}
+                <div className="relative">
+                  <button 
+                    onClick={onShowCart}
+                    className="relative p-2 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-cyan-500/20 rounded-xl transition-all duration-300 group border border-white/10 hover:border-blue-400/30 backdrop-blur-sm"
+                  >
+                    <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6m1.5-6h0m9 0v0a1.5 1.5 0 00-3 0v0m3 0a1.5 1.5 0 003 0v0m-9 0h3m-3 0a1.5 1.5 0 01-3 0v0"/>
+                    </svg>
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-blue-500/50 animate-pulse border border-white/20">
+                        {cartCount}
+                      </span>
+                    )}
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full h-5 w-5 opacity-75 animate-ping"></span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Desktop Actions */}
             {!isMobile && (
               <div className="flex items-center space-x-2 lg:space-x-3">
-                <button className="px-3 py-2 text-sm lg:text-base text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200">
-                  Login
-                </button>
+                {user ? (
+                  <div className="flex items-center space-x-3">
+                    <span className="text-sm text-blue-400 font-medium">Welcome, {user.email.split('@')[0]}</span>
+                    <button 
+                      onClick={onLogout}
+                      className="px-3 py-2 text-sm lg:text-base text-gray-300 hover:text-red-400 font-medium transition-colors duration-200"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={onShowLogin}
+                    className="px-3 py-2 text-sm lg:text-base text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200"
+                  >
+                    Login
+                  </button>
+                )}
                 
                 <div className="relative">
                   <button 
                     onClick={onShowCart}
-                    className="p-2 text-gray-300 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all duration-200"
+                    className="relative p-2 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-cyan-500/20 rounded-xl transition-all duration-300 group border border-white/10 hover:border-blue-400/30 backdrop-blur-sm"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6m1.5-6h0m9 0v0a1.5 1.5 0 00-3 0v0m3 0a1.5 1.5 0 003 0v0m-9 0h3m-3 0a1.5 1.5 0 01-3 0v0"/>
                     </svg>
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px] font-medium shadow-lg">
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-blue-500/50 animate-pulse border border-white/20">
                         {cartCount}
                       </span>
+                    )}
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full h-5 w-5 opacity-75 animate-ping"></span>
                     )}
                   </button>
                 </div>
                 
-                <button className="px-3 py-2 text-sm lg:text-base bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25">
-                  Get Started
+                <button 
+                  onClick={onGetStarted}
+                  className={`px-3 py-2 text-sm lg:text-base bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25 transform hover:scale-105 ${
+                    isFirstVisit ? 'animate-pulse' : ''
+                  }`}
+                >
+                  {getStartedButtonText()}
                 </button>
               </div>
             )}
@@ -187,35 +265,16 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome })
                 Contact
               </button>
               
-              {/* Mobile Actions */}
+              {/* Mobile Actions - Get Started Button */}
               <div className="pt-4 border-t border-gray-700/50 mt-4">
-                <div className="flex flex-col space-y-3">
-                  <button className="w-full px-4 py-3 text-gray-300 hover:text-blue-400 font-medium transition-colors duration-200 text-left">
-                    Login
-                  </button>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="relative">
-                      <button 
-                        onClick={onShowCart}
-                        className="p-3 text-gray-300 hover:text-blue-400 hover:bg-blue-400/10 rounded-lg transition-all duration-200"
-                      >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6m1.5-6h0m9 0v0a1.5 1.5 0 00-3 0v0m3 0a1.5 1.5 0 003 0v0m-9 0h3m-3 0a1.5 1.5 0 01-3 0v0"/>
-                        </svg>
-                        {cartCount > 0 && (
-                          <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-medium shadow-lg">
-                            {cartCount}
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                    
-                    <button className="flex-1 ml-4 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25">
-                      Get Started
-                    </button>
-                  </div>
-                </div>
+                <button 
+                  onClick={onGetStarted}
+                  className={`w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25 transform hover:scale-105 ${
+                    isFirstVisit ? 'animate-pulse' : ''
+                  }`}
+                >
+                  {getStartedButtonText()}
+                </button>
               </div>
             </nav>
           </div>

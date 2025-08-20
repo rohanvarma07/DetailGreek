@@ -1,6 +1,27 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 const CartContext = createContext();
+
+// Load cart data from localStorage
+const loadCartFromStorage = () => {
+    try {
+        const savedCart = localStorage.getItem('detailGreekCart');
+        return savedCart ? JSON.parse(savedCart) : { items: [] };
+    } catch (error) {
+        console.error('Error loading cart from storage:', error);
+        return { items: [] };
+    }
+};
+
+// Save cart data to localStorage
+const saveCartToStorage = (cartState) => {
+    try {
+        localStorage.setItem('detailGreekCart', JSON.stringify(cartState));
+    } catch (error) {
+        console.error('Error saving cart to storage:', error);
+    }
+};
 
 const cartReducer = (state, action) => {
     switch (action.type) {
@@ -49,28 +70,68 @@ const cartReducer = (state, action) => {
     }
 };
 
-const initialState = {
-    items: [],
-    isOpen: false
-};
-
 export const CartProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(cartReducer, initialState);
+    const [state, dispatch] = useReducer(cartReducer, loadCartFromStorage());
+
+    // Save to localStorage whenever cart state changes
+    useEffect(() => {
+        saveCartToStorage(state);
+    }, [state]);
 
     const addToCart = (product) => {
         dispatch({ type: 'ADD_TO_CART', payload: product });
+        toast.success(`${product.name} added to cart!`, {
+            duration: 3000,
+            position: 'top-right',
+            style: {
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px',
+            },
+            iconTheme: {
+                primary: '#60a5fa',
+                secondary: 'white',
+            },
+        });
     };
 
-    const removeFromCart = (productId) => {
-        dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
+    const removeFromCart = (id) => {
+        const item = state.items.find(item => item.id === id);
+        dispatch({ type: 'REMOVE_FROM_CART', payload: id });
+        if (item) {
+            toast.error(`${item.name} removed from cart`, {
+                duration: 2000,
+                position: 'top-right',
+                style: {
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    color: 'white',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '12px',
+                },
+            });
+        }
     };
 
-    const updateQuantity = (productId, quantity) => {
-        dispatch({ type: 'UPDATE_QUANTITY', payload: { id: productId, quantity } });
+    const updateQuantity = (id, quantity) => {
+        dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
     };
 
     const clearCart = () => {
         dispatch({ type: 'CLEAR_CART' });
+        toast.success('Cart cleared!', {
+            duration: 2000,
+            position: 'top-right',
+            style: {
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px',
+            },
+        });
     };
 
     const getCartTotal = () => {
