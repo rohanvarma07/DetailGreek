@@ -55,14 +55,14 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, o
   };
 
   return (
-    <header className="bg-gradient-to-r from-slate-900/95 via-gray-900/95 to-zinc-900/95 backdrop-blur-md border-b border-gray-700/50 sticky top-0 z-50 shadow-xl shadow-black/20">
+    <header className="bg-gradient-to-r from-slate-900/95 via-slate-800/95 to-gray-900/95 backdrop-blur-xl border-b border-slate-700/50 sticky top-0 z-50 shadow-2xl shadow-slate-900/50">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
             <button 
               onClick={() => handleNavigation('home')}
-              className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25 hover:scale-105 transition-transform duration-200"
+              className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-600 via-violet-600 to-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25 hover:scale-105 transition-transform duration-200"
             >
               <span className="text-white font-bold text-sm sm:text-lg">DG</span>
             </button>
@@ -139,18 +139,18 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, o
                 <div className="relative">
                   <button 
                     onClick={onShowCart}
-                    className="relative p-2 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-cyan-500/20 rounded-xl transition-all duration-300 group border border-white/10 hover:border-blue-400/30 backdrop-blur-sm"
+                    className="relative p-2 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/20 hover:to-teal-500/20 rounded-xl transition-all duration-300 group border border-white/10 hover:border-indigo-400/30 backdrop-blur-sm"
                   >
                     <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6m1.5-6h0m9 0v0a1.5 1.5 0 00-3 0v0m3 0a1.5 1.5 0 003 0v0m-9 0h3m-3 0a1.5 1.5 0 01-3 0v0"/>
                     </svg>
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-blue-500/50 animate-pulse border border-white/20">
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-indigo-600 to-teal-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-indigo-500/50 animate-pulse border border-white/20">
                         {cartCount}
                       </span>
                     )}
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full h-5 w-5 opacity-75 animate-ping"></span>
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-indigo-500 to-teal-500 rounded-full h-5 w-5 opacity-75 animate-ping"></span>
                     )}
                   </button>
                 </div>
@@ -182,25 +182,25 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, o
                 <div className="relative">
                   <button 
                     onClick={onShowCart}
-                    className="relative p-2 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-cyan-500/20 rounded-xl transition-all duration-300 group border border-white/10 hover:border-blue-400/30 backdrop-blur-sm"
+                    className="relative p-2 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/20 hover:to-teal-500/20 rounded-xl transition-all duration-300 group border border-white/10 hover:border-indigo-400/30 backdrop-blur-sm"
                   >
                     <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6m1.5-6h0m9 0v0a1.5 1.5 0 00-3 0v0m3 0a1.5 1.5 0 003 0v0m-9 0h3m-3 0a1.5 1.5 0 01-3 0v0"/>
                     </svg>
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-blue-500/50 animate-pulse border border-white/20">
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-indigo-600 to-teal-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-bold shadow-lg shadow-indigo-500/50 animate-pulse border border-white/20">
                         {cartCount}
                       </span>
                     )}
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full h-5 w-5 opacity-75 animate-ping"></span>
+                      <span className="absolute -top-1 -right-1 bg-gradient-to-r from-indigo-500 to-teal-500 rounded-full h-5 w-5 opacity-75 animate-ping"></span>
                     )}
                   </button>
                 </div>
                 
                 <button 
                   onClick={onGetStarted}
-                  className={`px-3 py-2 text-sm lg:text-base bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25 transform hover:scale-105 ${
+                  className={`px-3 py-2 text-sm lg:text-base bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-teal-500/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:from-indigo-500/20 hover:via-violet-500/20 hover:to-teal-500/20 hover:border-white/30 transition-all duration-200 font-medium shadow-lg hover:shadow-indigo-500/20 transform hover:scale-105 ${
                     isFirstVisit ? 'animate-pulse' : ''
                   }`}
                 >
@@ -269,7 +269,7 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, o
               <div className="pt-4 border-t border-gray-700/50 mt-4">
                 <button 
                   onClick={onGetStarted}
-                  className={`w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg shadow-blue-500/25 transform hover:scale-105 ${
+                  className={`w-full px-4 py-3 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-teal-500/10 backdrop-blur-md border border-white/20 text-white rounded-lg hover:from-indigo-500/20 hover:via-violet-500/20 hover:to-teal-500/20 hover:border-white/30 transition-all duration-200 font-medium shadow-lg hover:shadow-indigo-500/20 transform hover:scale-105 ${
                     isFirstVisit ? 'animate-pulse' : ''
                   }`}
                 >

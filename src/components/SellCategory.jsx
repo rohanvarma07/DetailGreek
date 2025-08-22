@@ -46,7 +46,7 @@ const SellCategory = ({ onCategoryClick }) => {
                 {/* Section Header */}
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                        What We <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Sell</span>
+                        What We <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-teal-400">Sell</span>
                     </h2>
                     <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                         Explore our comprehensive range of premium car care products designed to keep your vehicle looking its absolute best
@@ -99,7 +99,7 @@ const SellCategory = ({ onCategoryClick }) => {
                                             e.stopPropagation();
                                             handleCategoryClick(cat);
                                         }}
-                                        className="w-full bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 text-blue-300 font-semibold py-2 px-4 rounded-lg hover:from-blue-600/30 hover:to-cyan-600/30 transition-all duration-300 text-sm"
+                                        className="w-full bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-teal-500/10 backdrop-blur-md border border-white/20 text-gray-300 font-semibold py-2 px-4 rounded-lg hover:from-indigo-500/20 hover:via-violet-500/20 hover:to-teal-500/20 hover:border-white/30 hover:text-white transition-all duration-300 text-sm"
                                     >
                                         View Products
                                     </button>
@@ -111,14 +111,14 @@ const SellCategory = ({ onCategoryClick }) => {
 
                 {/* Call to Action */}
                 <div className="text-center mt-16">
-                    <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-4xl mx-auto">
+                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-4xl mx-auto">
                         <h3 className="text-2xl font-bold text-white mb-4">
                             Can't Find What You're Looking For?
                         </h3>
                         <p className="text-gray-300 mb-6">
                             Contact our experts to help you find the perfect products for your specific car care needs.
                         </p>
-                        <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-8 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
+                        <button className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-xl hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-cyan-500/20 hover:border-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/20">
                             Contact Expert
                         </button>
                     </div>

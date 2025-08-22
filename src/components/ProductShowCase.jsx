@@ -106,7 +106,7 @@ const ProductShowCase = ({ onProductView }) => {
                     {/* Minimal Section Header */}
                     <div className="text-center mb-12 sm:mb-16">
                         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-4 tracking-wide">
-                            Premium Car Care <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Products</span>
+                            Premium Car Care <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-teal-400">Products</span>
                         </h2>
                         <p className="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto font-light">
                             Discover our carefully curated collection of professional-grade car care products
@@ -118,7 +118,7 @@ const ProductShowCase = ({ onProductView }) => {
                         {products.map((product) => (
                             <div 
                                 key={product.id} 
-                                className={`relative group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-500 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10 ${
+                                className={`relative group bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 ${
                                     product.popular ? 'ring-1 ring-blue-400/30' : ''
                                 }`}
                             >
@@ -132,7 +132,7 @@ const ProductShowCase = ({ onProductView }) => {
                                 )}
 
                                 {/* Minimal Product Icon */}
-                                <div className="h-32 sm:h-40 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
+                                <div className="h-32 sm:h-40 bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center">
                                     <div className="text-4xl sm:text-5xl opacity-60">
                                         {product.id <= 2 ? '🧴' : product.id <= 4 ? '🧽' : '✨'}
                                     </div>
@@ -168,7 +168,7 @@ const ProductShowCase = ({ onProductView }) => {
                                                     onClick={() => {
                                                         handleProductView(product);
                                                     }}
-                                                    className="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm border border-white/10 cursor-pointer"
+                                                    className="flex-1 bg-gradient-to-r from-slate-500/10 via-gray-500/10 to-zinc-500/10 hover:from-slate-500/20 hover:via-gray-500/20 hover:to-zinc-500/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm border border-white/10 cursor-pointer"
                                                 >
                                                     View Details
                                                 </button>
@@ -177,7 +177,7 @@ const ProductShowCase = ({ onProductView }) => {
                                                     onClick={() => {
                                                         handleAddToCart(product);
                                                     }}
-                                                    className="flex-1 bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm backdrop-blur-sm border border-white/10 cursor-pointer"
+                                                    className="flex-1 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-teal-500/10 backdrop-blur-md border border-white/20 hover:from-indigo-500/20 hover:via-violet-500/20 hover:to-teal-500/20 hover:border-white/30 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm cursor-pointer"
                                                 >
                                                     Add to Cart
                                                 </button>
@@ -198,7 +198,7 @@ const ProductShowCase = ({ onProductView }) => {
                             <p className="text-gray-400 mb-6 text-sm sm:text-base">
                                 Contact us for wholesale pricing and custom product bundles for automotive professionals and enthusiasts.
                             </p>
-                            <button className="bg-gradient-to-r from-purple-600/80 to-pink-600/80 hover:from-purple-600 hover:to-pink-600 text-white font-medium py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/10">
+                            <button className="bg-gradient-to-r from-amber-600/20 via-orange-600/20 to-amber-600/20 hover:from-amber-600/30 hover:via-orange-600/30 hover:to-amber-600/30 text-white font-medium py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/10 hover:border-white/20 shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20">
                                 Contact Sales
                             </button>
                         </div>

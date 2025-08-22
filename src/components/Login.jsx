@@ -79,7 +79,7 @@ const Login = ({ onBack, onLogin }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-gray-900 relative overflow-hidden">
             {/* Floating Car Emojis Background */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-16 left-8 text-5xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '0s', animationDuration: '5s'}}>🚗</div>
@@ -107,10 +107,10 @@ const Login = ({ onBack, onLogin }) => {
                     </div>
 
                     {/* Login Form */}
-                    <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
+                    <div className="bg-gradient-to-br from-white/5 via-indigo-500/5 to-teal-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-8">
                         {/* Logo and Title */}
                         <div className="text-center mb-8">
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 mx-auto mb-4">
+                            <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 via-violet-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/25 mx-auto mb-4">
                                 <span className="text-white font-bold text-2xl">DG</span>
                             </div>
                             <h1 className="text-2xl font-light text-white mb-2 tracking-wide">Welcome Back</h1>
@@ -188,7 +188,7 @@ const Login = ({ onBack, onLogin }) => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
+                                className="w-full bg-gradient-to-r from-indigo-600 via-violet-600 to-teal-600 hover:from-indigo-700 hover:via-violet-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed shadow-lg shadow-indigo-500/25"
                             >
                                 {isLoading ? (
                                     <div className="flex items-center justify-center">
