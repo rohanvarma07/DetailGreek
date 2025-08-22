@@ -11,9 +11,10 @@ import Footer from './components/Footer'
 import Cart from './components/Cart'
 import About from './components/About'
 import Login from './components/Login'
+import Portfolio from './components/Portfolio'
 
 function App() {
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'cart', 'about', 'category', or 'login'
+  const [currentView, setCurrentView] = useState('home'); // 'home', 'cart', 'about', 'category', 'login', or 'portfolio'
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [user, setUser] = useState(null); // User authentication state
   const [isFirstVisit, setIsFirstVisit] = useState(false); // Track if it's user's first visit
@@ -54,6 +55,10 @@ function App() {
 
   const showLogin = () => {
     setCurrentView('login');
+  };
+
+  const showPortfolio = () => {
+    setCurrentView('portfolio');
   };
 
   const showCategoryDetails = (category) => {
@@ -208,7 +213,7 @@ function App() {
         {currentView === 'home' ? (
           <>
             <div id="home" className="mb-16 lg:mb-24">
-              <Hero />
+              <Hero onShowPortfolio={showPortfolio} />
             </div>
             <div id="categories" className="mb-16 lg:mb-24">
               <SellCategory onCategoryClick={showCategoryDetails} />
@@ -256,6 +261,8 @@ function App() {
           </div>
         ) : currentView === 'login' ? (
           <Login onBack={showHome} onLogin={handleLogin} />
+        ) : currentView === 'portfolio' ? (
+          <Portfolio onBack={showHome} />
         ) : (
           <About onBackToHome={showHome} />
         )}

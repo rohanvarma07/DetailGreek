@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Hero = () => {
+const Hero = ({ onShowPortfolio }) => {
     return (
         <section className="relative min-h-screen flex items-center overflow-hidden py-16 lg:py-24">
             <div className="relative w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -21,7 +21,10 @@ const Hero = () => {
                             <button className="px-10 lg:px-12 py-5 lg:py-6 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-teal-500/10 backdrop-blur-md border border-white/20 text-white text-lg lg:text-xl font-medium rounded-xl hover:from-indigo-500/20 hover:via-violet-500/20 hover:to-teal-500/20 hover:border-white/30 transition-all duration-300 shadow-lg hover:shadow-indigo-500/20 transform hover:-translate-y-0.5">
                                 Book Service
                             </button>
-                            <button className="px-10 lg:px-12 py-5 lg:py-6 border-2 border-gray-500/40 bg-gradient-to-r from-slate-500/5 via-gray-500/5 to-zinc-500/5 text-gray-300 text-lg lg:text-xl font-medium rounded-xl hover:border-gray-400/60 hover:text-gray-200 hover:from-slate-500/10 hover:via-gray-500/10 hover:to-zinc-500/10 transition-all duration-300 backdrop-blur-sm">
+                            <button 
+                                onClick={onShowPortfolio}
+                                className="px-10 lg:px-12 py-5 lg:py-6 border-2 border-gray-500/40 bg-gradient-to-r from-slate-500/5 via-gray-500/5 to-zinc-500/5 text-gray-300 text-lg lg:text-xl font-medium rounded-xl hover:border-gray-400/60 hover:text-gray-200 hover:from-slate-500/10 hover:via-gray-500/10 hover:to-zinc-500/10 transition-all duration-300 backdrop-blur-sm cursor-pointer"
+                            >
                                 View Portfolio
                             </button>
                         </div>
