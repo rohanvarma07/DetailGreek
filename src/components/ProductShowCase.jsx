@@ -1,8 +1,81 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
+import apiService from "../services/apiService";
+import toast from "react-hot-toast";
 
 const ProductShowCase = ({ onProductView }) => {
     const { addToCart } = useCart();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch products from backend
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const fetchedProducts = await apiService.products.getAll();
+                
+                // Transform backend data to match frontend structure
+                const transformedProducts = fetchedProducts.map(product => ({
+                    id: product.id,
+                    name: product.prod_name,
+                    description: product.prod_description,
+                    price: `₹${product.prod_price?.toLocaleString()}`,
+                    quantity: product.prod_quantity,
+                    image: product.img_url,
+                    features: [
+                        "Professional Grade",
+                        "High Quality",
+                        "Tested & Approved",
+                        "Long Lasting"
+                    ],
+                    popular: product.id <= 2 // Mark first 2 as popular
+                }));
+                
+                setProducts(transformedProducts);
+            } catch (err) {
+                console.error('Failed to fetch products:', err);
+                setError(err.message);
+                toast.error('Failed to load products');
+                
+                // Fallback to static data if backend fails
+                setProducts(getStaticProducts());
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    // Static fallback products
+    const getStaticProducts = () => [
+        {
+            id: 1,
+            name: "Premium Car Wax",
+            description: "High-grade carnauba wax for superior shine and protection",
+            price: "₹2,099",
+            features: ["Carnauba Formula", "UV Protection", "Water Beading", "6-Month Durability"],
+            popular: true
+        },
+        {
+            id: 2,
+            name: "Ceramic Coating Kit",
+            description: "Professional-grade ceramic coating for long-lasting protection",
+            price: "₹10,899",
+            features: ["9H Hardness", "Hydrophobic Coating", "2-Year Protection", "Application Kit Included"],
+            popular: true
+        },
+        {
+            id: 3,
+            name: "Microfiber Towel Set",
+            description: "Ultra-soft microfiber towels for streak-free cleaning",
+            price: "₹1,699",
+            features: ["600 GSM Weight", "Lint-Free", "Machine Washable", "Pack of 6"],
+            popular: false
+        }
+    ];
 
     const handleAddToCart = (product) => {
         addToCart(product);
@@ -35,56 +108,33 @@ const ProductShowCase = ({ onProductView }) => {
             onProductView(enhancedProduct);
         }
     };
-    const products = [
-        {
-            id: 1,
-            name: "Premium Car Wax",
-            description: "High-grade carnauba wax for superior shine and protection",
-            price: "₹2,099",
-            features: ["Carnauba Formula", "UV Protection", "Water Beading", "6-Month Durability"],
-            popular: true
-        },
-        {
-            id: 2,
-            name: "Ceramic Coating Kit",
-            description: "Professional-grade ceramic coating for long-lasting protection",
-            price: "₹10,899",
-            features: ["9H Hardness", "Hydrophobic Coating", "2-Year Protection", "Application Kit Included"],
-            popular: false
-        },
-        {
-            id: 3,
-            name: "Microfiber Towel Set",
-            description: "Ultra-soft microfiber towels for streak-free cleaning",
-            price: "₹1,699",
-            features: ["600 GSM Weight", "Lint-Free", "Machine Washable", "Pack of 6"],
-            popular: false
-        },
-        {
-            id: 4,
-            name: "Leather Conditioner",
-            description: "Premium leather care solution for interior protection",
-            price: "₹1,399",
-            features: ["Natural Oils", "UV Protection", "Crack Prevention", "Pleasant Scent"],
-            popular: false
-        },
-        {
-            id: 5,
-            name: "Tire Shine Spray",
-            description: "Long-lasting tire shine for that showroom finish",
-            price: "₹1,099",
-            features: ["Silicone-Free", "UV Protection", "Non-Greasy Formula", "Easy Application"],
-            popular: false
-        },
-        {
-            id: 6,
-            name: "Detailing Tool Kit",
-            description: "Complete set of professional detailing tools and brushes",
-            price: "₹7,599",
-            features: ["15-Piece Set", "Storage Case", "Professional Grade", "Multiple Brush Types"],
-            popular: true
-        }
-    ];
+
+    // Loading state
+    if (loading) {
+        return (
+            <section className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12 sm:mb-16">
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-4 tracking-wide">
+                            Loading <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-teal-400">Products</span>
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden animate-pulse">
+                                <div className="h-32 sm:h-40 bg-white/10"></div>
+                                <div className="p-4 sm:p-6 space-y-3">
+                                    <div className="h-4 bg-white/10 rounded w-3/4"></div>
+                                    <div className="h-3 bg-white/10 rounded w-1/2"></div>
+                                    <div className="h-8 bg-white/10 rounded w-full"></div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">

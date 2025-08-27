@@ -1,37 +1,119 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
+import ProductDetailView from './ProductDetailView';
 
 const Cart = ({ onBackToShop }) => {
-    const { items, removeFromCart, updateQuantity, clearCart, getCartTotal } = useCart();
+    const { items, removeFromCart, updateQuantity, clearCart, getCartTotal, addToCart } = useCart();
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showProductDetail, setShowProductDetail] = useState(false);
+
+    // Scroll to top when Cart component mounts
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    }, []);
+
+    // Scroll to top when returning from product detail view
+    useEffect(() => {
+        if (!showProductDetail) {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, [showProductDetail]);
 
     const formatPrice = (price) => {
         const numPrice = parseFloat(price.replace('₹', '').replace(',', ''));
         return `₹${numPrice.toLocaleString('en-IN')}`;
     };
 
+    const handleProductClick = (item) => {
+        // Convert cart item to product format for ProductDetailView
+        const product = {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            description: item.description,
+            detailedDescription: item.detailedDescription || item.description || 'Professional quality product for your car care needs.',
+            image: item.image,
+            imageEmoji: item.imageEmoji,
+            features: item.features || ['Professional Grade', 'High Quality', 'Easy to Use', 'Durable'],
+            specifications: item.specifications || {
+                "Product ID": item.id.toString(),
+                "Price": item.price,
+                "In Cart": `${item.quantity} item${item.quantity !== 1 ? 's' : ''}`
+            },
+            benefits: item.benefits || [
+                'Premium quality ingredients',
+                'Long-lasting results', 
+                'Professional grade formula',
+                'Safe for all vehicle types'
+            ],
+            usage: item.usage || 'Follow product instructions for best results. Test on small area first.',
+            rating: item.rating || 4.5 + (Math.random() * 0.4),
+            reviews: item.reviews || Math.floor(Math.random() * 150) + 25,
+            quantity: item.quantity
+        };
+        
+        setSelectedProduct(product);
+        setShowProductDetail(true);
+    };
+
+    const handleBackToCart = () => {
+        setShowProductDetail(false);
+        setSelectedProduct(null);
+    };
+
+    const handleAddToCartFromDetail = (product) => {
+        addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            description: product.description,
+            features: product.features,
+            image: product.image,
+            imageEmoji: product.imageEmoji
+        });
+    };
+
+    // Show product detail view if a product is selected
+    if (showProductDetail && selectedProduct) {
+        return (
+            <ProductDetailView 
+                product={selectedProduct} 
+                onBack={handleBackToCart}
+                onAddToCart={handleAddToCartFromDetail}
+            />
+        );
+    }
+
     if (items.length === 0) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
-                {/* Floating Car Emojis Background */}
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black relative overflow-hidden">
+                {/* Minimal Background Elements */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-16 left-8 text-5xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '0s', animationDuration: '5s'}}>🛒</div>
-                    <div className="absolute top-32 right-16 text-4xl opacity-15 blur-sm animate-bounce" style={{animationDelay: '1s', animationDuration: '6s'}}>🚗</div>
-                    <div className="absolute bottom-32 left-20 text-6xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '2s', animationDuration: '7s'}}>🏎️</div>
-                    <div className="absolute bottom-16 right-12 text-3xl opacity-20 blur-sm animate-bounce" style={{animationDelay: '3s', animationDuration: '4s'}}>🚘</div>
-                    <div className="hidden sm:block absolute top-1/2 left-16 text-4xl opacity-15 blur-sm animate-pulse" style={{animationDelay: '4s', animationDuration: '5s'}}>🧽</div>
-                    <div className="hidden md:block absolute top-1/3 right-1/4 text-5xl opacity-10 blur-sm animate-bounce" style={{animationDelay: '5s', animationDuration: '6s'}}>✨</div>
+                    <div className="absolute inset-0 opacity-[0.02]" style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+                    }}></div>
+                    <div className="absolute top-20 left-10 w-24 h-24 bg-white/2 rounded-full blur-xl animate-pulse" style={{animationDelay: '0s', animationDuration: '6s'}}></div>
+                    <div className="absolute bottom-40 right-20 w-32 h-32 bg-white/1 rounded-full blur-xl animate-pulse" style={{animationDelay: '3s', animationDuration: '8s'}}></div>
                 </div>
 
-                {/* Main Content */}
-                <div className="relative z-10 pt-20 pb-12">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center py-12 sm:py-16">
-                            <div className="text-6xl mb-8 opacity-60">🛒</div>
-                            <h2 className="text-2xl sm:text-3xl font-light text-white mb-4 tracking-wide">Your Cart is Empty</h2>
-                            <p className="text-gray-400 mb-8 text-sm sm:text-base">Start shopping to add some amazing car care products to your cart!</p>
+                {/* Enhanced Empty State */}
+                <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+                    <div className="text-center max-w-md mx-auto">
+                        <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-xl p-8 sm:p-12">
+                            <div className="text-5xl sm:text-6xl mb-6 opacity-60">🛒</div>
+                            <h2 className="text-2xl sm:text-3xl font-light text-white mb-3 tracking-wide">Your Cart is Empty</h2>
+                            <p className="text-gray-400 mb-8 text-sm leading-relaxed">Start shopping to add some amazing car care products to your cart!</p>
                             <button 
                                 onClick={onBackToShop}
-                                className="bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/10"
+                                className="bg-gray-700/40 hover:bg-gray-600/60 border border-gray-600/50 hover:border-gray-500/70 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200"
                             >
                                 Continue Shopping
                             </button>
@@ -43,126 +125,181 @@ const Cart = ({ onBackToShop }) => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
-            {/* Floating Car Emojis Background */}
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black relative overflow-hidden">
+            {/* Enhanced Background with Better Gradients */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-10 left-10 text-6xl opacity-10 blur-sm animate-bounce" style={{animationDelay: '0s', animationDuration: '6s'}}>🚗</div>
-                <div className="absolute top-32 right-20 text-5xl opacity-15 blur-sm animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}>🚙</div>
-                <div className="absolute top-64 left-1/4 text-4xl opacity-20 blur-sm animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}>🚕</div>
-                <div className="absolute top-80 right-1/3 text-6xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '3s', animationDuration: '7s'}}>🏎️</div>
-                <div className="absolute bottom-32 left-16 text-5xl opacity-15 blur-sm animate-bounce" style={{animationDelay: '4s', animationDuration: '6s'}}>🚘</div>
-                <div className="absolute bottom-20 right-10 text-4xl opacity-20 blur-sm animate-pulse" style={{animationDelay: '5s', animationDuration: '5s'}}>🛒</div>
-                <div className="hidden sm:block absolute top-1/2 left-10 text-3xl opacity-25 blur-sm animate-bounce" style={{animationDelay: '1.5s', animationDuration: '4s'}}>🧽</div>
-                <div className="hidden md:block absolute top-1/3 right-1/4 text-5xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '2.5s', animationDuration: '6s'}}>✨</div>
+                <div className="absolute inset-0 opacity-[0.02]" style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+                }}></div>
+                <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-500/10 via-cyan-500/5 to-indigo-500/10 rounded-full blur-xl animate-pulse" style={{animationDelay: '0s', animationDuration: '6s'}}></div>
+                <div className="absolute bottom-40 right-20 w-40 h-40 bg-gradient-to-br from-purple-500/8 via-pink-500/4 to-violet-500/8 rounded-full blur-xl animate-pulse" style={{animationDelay: '3s', animationDuration: '8s'}}></div>
+                <div className="absolute top-1/2 left-1/4 w-28 h-28 bg-gradient-to-br from-emerald-500/6 via-teal-500/3 to-cyan-500/6 rounded-full blur-xl animate-pulse" style={{animationDelay: '6s', animationDuration: '10s'}}></div>
             </div>
 
             {/* Main Content */}
-            <div className="relative z-10 pt-20 pb-12">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Minimal Header */}
-                    <div className="mb-8 sm:mb-12">
-                        <h1 className="text-3xl sm:text-4xl font-light text-white mb-2 tracking-wide">Shopping Cart</h1>
-                        <p className="text-gray-400 text-sm sm:text-base">Review your selected car care products</p>
+            <div className="relative z-10 pt-16 pb-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Single Header Section - Remove Duplicate */}
+                    <div className="flex items-center justify-between mb-8">
+                        <button
+                            onClick={onBackToShop}
+                            className="group flex items-center bg-gradient-to-r from-gray-800/80 to-gray-700/80 backdrop-blur-sm border border-gray-600/50 rounded-lg px-5 py-2.5 hover:from-gray-700/80 hover:to-gray-600/80 hover:border-gray-500/60 transition-all duration-200 shadow-lg"
+                        >
+                            <svg className="w-4 h-4 mr-2 text-gray-300 group-hover:text-white group-hover:-translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors duration-200">Back to Shop</span>
+                        </button>
+                        
+                        <div className="flex items-center bg-gradient-to-r from-blue-900/40 to-indigo-900/40 backdrop-blur-sm border border-blue-600/30 rounded-lg px-4 py-2.5 shadow-lg">
+                            <div className="w-2 h-2 bg-blue-400 rounded-full mr-3 animate-pulse"></div>
+                            <span className="text-blue-200 text-sm font-medium">{items.length} Item{items.length !== 1 ? 's' : ''}</span>
+                        </div>
+                    </div>
+
+                    {/* Enhanced Title with Gradient */}
+                    <div className="text-center mb-10">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent mb-3 tracking-tight">Shopping Cart</h1>
+                        <div className="w-24 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-3"></div>
+                        <p className="text-gray-400 text-sm">Click on any product to view details</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                        {/* Minimal Cart Items */}
+                        {/* Enhanced Cart Items with Better Spacing and Colors */}
                         <div className="lg:col-span-2 space-y-4">
-                            {items.map((item) => (
-                                <div key={item.id} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 sm:p-6 hover:bg-white/10 transition-all duration-300">
-                                    <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                                        {/* Product Icon */}
-                                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl flex items-center justify-center flex-shrink-0 border border-white/10">
-                                            <div className="text-2xl sm:text-3xl opacity-60">
-                                                {item.id <= 3 ? '🧴' : item.id <= 6 ? '🧽' : item.id <= 10 ? '✨' : '🪑'}
+                            {items.map((item, index) => (
+                                <div 
+                                    key={item.id} 
+                                    className="group relative bg-gradient-to-r from-gray-800/40 via-gray-800/30 to-gray-700/40 backdrop-blur-sm border border-gray-600/40 rounded-xl p-6 hover:from-gray-700/50 hover:to-gray-600/50 hover:border-gray-500/60 transition-all duration-300 shadow-xl cursor-pointer"
+                                    style={{
+                                        animationDelay: `${index * 0.1}s`,
+                                        animation: 'slideInUp 0.6s ease-out forwards'
+                                    }}
+                                    onClick={() => handleProductClick(item)}
+                                >
+                                    {/* Click indicator */}
+                                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-60 transition-opacity duration-200">
+                                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </div>
+
+                                    <div className="flex items-center space-x-6">
+                                        {/* Enhanced Product Image - Larger */}
+                                        <div className="w-16 h-16 bg-gradient-to-br from-gray-600/30 to-gray-700/40 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 border border-gray-600/30 shadow-lg group-hover:scale-105 transition-transform duration-200">
+                                            {/* Display actual product image if available */}
+                                            {item.image && item.image.startsWith('http') ? (
+                                                <img 
+                                                    src={item.image} 
+                                                    alt={item.name}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                        e.target.nextSibling.style.display = 'flex';
+                                                    }}
+                                                />
+                                            ) : null}
+                                            
+                                            {/* Enhanced Emoji fallback */}
+                                            <div 
+                                                className={`w-full h-full flex items-center justify-center ${
+                                                    item.image && item.image.startsWith('http') ? 'hidden' : 'flex'
+                                                }`}
+                                            >
+                                                <div className="text-3xl opacity-70">
+                                                    {item.imageEmoji || item.image || (item.id <= 3 ? '🧴' : item.id <= 6 ? '🧽' : item.id <= 10 ? '✨' : '🪑')}
+                                                </div>
                                             </div>
                                         </div>
 
-                                        {/* Product Details */}
+                                        {/* Enhanced Product Details - Larger Text */}
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-lg sm:text-xl font-medium text-white mb-1 line-clamp-1">{item.name}</h3>
-                                            <p className="text-gray-400 text-sm mb-2 line-clamp-1">{item.description}</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {item.features && item.features.slice(0, 2).map((feature, index) => (
-                                                    <span key={index} className="text-xs bg-blue-500/15 text-blue-300 px-2 py-1 rounded-full border border-blue-500/20">
-                                                        {feature}
-                                                    </span>
-                                                ))}
-                                            </div>
+                                            <h3 className="text-xl font-semibold text-white mb-2 line-clamp-1">{item.name}</h3>
+                                            <p className="text-gray-300 text-base line-clamp-2 leading-relaxed">{item.description}</p>
                                         </div>
 
-                                        {/* Price and Quantity */}
-                                        <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start space-x-4 sm:space-x-0 sm:space-y-3">
-                                            <div className="text-xl sm:text-2xl font-semibold text-blue-400">{formatPrice(item.price)}</div>
-                                            <div className="flex items-center space-x-2">
+                                        {/* Enhanced Quantity Controls with Gradients */}
+                                        <div className="flex items-center space-x-4" onClick={(e) => e.stopPropagation()}>
+                                            <div className="flex items-center space-x-3 bg-gradient-to-r from-gray-700/40 to-gray-600/40 rounded-xl p-2 border border-gray-600/30">
                                                 <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                                    className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors border border-white/10"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        updateQuantity(item.id, item.quantity - 1);
+                                                    }}
+                                                    className="w-8 h-8 bg-gradient-to-r from-red-600/60 to-red-500/60 hover:from-red-600/80 hover:to-red-500/80 rounded-lg flex items-center justify-center transition-all duration-200 border border-red-500/30 shadow-lg"
                                                 >
-                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                                                     </svg>
                                                 </button>
-                                                <span className="text-white font-semibold w-8 text-center text-sm">{item.quantity}</span>
+                                                <span className="text-white font-semibold w-8 text-center text-lg">{item.quantity}</span>
                                                 <button
-                                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                                    className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors border border-white/10"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        updateQuantity(item.id, item.quantity + 1);
+                                                    }}
+                                                    className="w-8 h-8 bg-gradient-to-r from-emerald-600/60 to-green-500/60 hover:from-emerald-600/80 hover:to-green-500/80 rounded-lg flex items-center justify-center transition-all duration-200 border border-emerald-500/30 shadow-lg"
                                                 >
-                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                                     </svg>
                                                 </button>
                                             </div>
-                                            <button
-                                                onClick={() => removeFromCart(item.id)}
-                                                className="text-red-400 hover:text-red-300 text-sm transition-colors"
-                                            >
-                                                Remove
-                                            </button>
+                                            
+                                            <div className="text-right">
+                                                <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-1">{formatPrice(item.price)}</div>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        removeFromCart(item.id);
+                                                    }}
+                                                    className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors duration-200 hover:underline"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Minimal Order Summary */}
+                        {/* Enhanced Order Summary with Gradients */}
                         <div className="lg:col-span-1">
-                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 sm:p-6 sticky top-24">
-                                <h3 className="text-xl sm:text-2xl font-medium text-white mb-6">Order Summary</h3>
+                            <div className="bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-700/40 backdrop-blur-sm border border-gray-600/40 rounded-xl p-6 sticky top-20 shadow-xl">
+                                <h3 className="text-2xl font-semibold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">Order Summary</h3>
                                 
+                                {/* Enhanced Item List */}
                                 <div className="space-y-3 mb-6">
                                     {items.map((item) => (
-                                        <div key={item.id} className="flex justify-between text-sm">
-                                            <span className="text-gray-400 line-clamp-1">{item.name} × {item.quantity}</span>
-                                            <span className="text-white font-medium">
+                                        <div key={item.id} className="flex justify-between text-sm py-2 border-b border-gray-700/30">
+                                            <span className="text-gray-300 line-clamp-1 font-medium">{item.name} × {item.quantity}</span>
+                                            <span className="text-white font-semibold ml-3">
                                                 ₹{(parseFloat(item.price.replace('₹', '').replace(',', '')) * item.quantity).toLocaleString('en-IN')}
                                             </span>
                                         </div>
                                     ))}
                                 </div>
 
-                                <div className="border-t border-white/10 pt-4 mb-6">
-                                    <div className="flex justify-between text-lg font-semibold text-white">
-                                        <span>Total</span>
-                                        <span className="text-blue-400">₹{getCartTotal().toLocaleString('en-IN')}</span>
+                                {/* Enhanced Total Section */}
+                                <div className="border-t border-gradient-to-r from-blue-500/20 to-purple-500/20 pt-5 mb-6">
+                                    <div className="flex justify-between items-center bg-gradient-to-r from-gray-700/30 to-gray-600/30 rounded-lg p-4 border border-gray-600/30">
+                                        <span className="text-xl font-semibold text-white">Total</span>
+                                        <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">₹{getCartTotal().toLocaleString('en-IN')}</span>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <button className="w-full bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-white/10">
+                                {/* Enhanced Action Buttons with Gradients */}
+                                <div className="space-y-4">
+                                    <button className="w-full bg-gradient-to-r from-blue-600/80 via-cyan-600/80 to-blue-700/80 hover:from-blue-600 hover:via-cyan-600 hover:to-blue-700 border border-blue-500/30 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg">
                                         Proceed to Checkout
                                     </button>
                                     <button 
                                         onClick={clearCart}
-                                        className="w-full bg-red-600/20 border border-red-500/30 text-red-300 font-medium py-3 px-6 rounded-xl hover:bg-red-600/30 transition-all duration-300"
+                                        className="w-full bg-gradient-to-r from-red-600/60 to-red-700/60 hover:from-red-600/80 hover:to-red-700/80 border border-red-500/30 text-red-100 hover:text-white font-medium py-3 px-4 rounded-lg hover:bg-red-600/30 transition-all duration-300 shadow-lg"
                                     >
                                         Clear Cart
-                                    </button>
-                                    <button 
-                                        onClick={onBackToShop}
-                                        className="block w-full text-center text-gray-400 hover:text-white transition-colors py-2"
-                                    >
-                                        Continue Shopping
                                     </button>
                                 </div>
                             </div>
@@ -170,6 +307,34 @@ const Cart = ({ onBackToShop }) => {
                     </div>
                 </div>
             </div>
+            
+            {/* Enhanced CSS Animations and Utilities */}
+            <style jsx>{`
+                @keyframes slideInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .line-clamp-1 {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                }
+                
+                .line-clamp-2 {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 2;
+                }
+            `}</style>
         </div>
     );
 };

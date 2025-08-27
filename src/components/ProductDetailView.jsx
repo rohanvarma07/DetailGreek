@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ProductDetailView = ({ product, onBack, onAddToCart }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [quantity, setQuantity] = useState(1);
+
+    // Scroll to top when component mounts or product changes
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    }, [product]);
 
     const handleAddToCart = () => {
         for (let i = 0; i < quantity; i++) {
@@ -25,65 +34,106 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
             {/* Main Content */}
             <div className="relative z-10 py-4 sm:py-8">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Minimal Header with Back Button */}
+                    {/* Professional Header with Back Button */}
                     <div className="flex items-center justify-between mb-6 sm:mb-8">
                         <button
                             onClick={onBack}
-                            className="flex items-center text-blue-400 hover:text-blue-300 transition-all duration-300 group bg-white/5 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10 hover:bg-white/10"
+                            className="flex items-center text-gray-400 hover:text-gray-300 transition-all duration-200 group bg-gray-800/60 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700/50 hover:bg-gray-700/60"
                         >
-                            <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 mr-2 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                             <span className="text-sm font-medium">Back</span>
                         </button>
                         
-                        {/* Product emoji indicator */}
-                        <div className="text-2xl opacity-60">
-                            {product.id <= 3 ? '🧴' : product.id <= 6 ? '🧽' : product.id <= 10 ? '✨' : '🪑'}
+                        {/* Professional status indicator */}
+                        <div className="flex items-center bg-gray-800/60 backdrop-blur-sm border border-gray-700/40 rounded-lg px-3 py-2">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                            <span className="text-gray-300 text-xs font-medium">Product Details</span>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                        {/* Minimal Product Image */}
+                        {/* Professional Product Image */}
                         <div className="space-y-4">
-                            <div className="bg-gradient-to-br from-white/5 via-blue-400/10 to-cyan-400/10 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden h-64 sm:h-80 lg:h-96 flex items-center justify-center">
-                                <div className="text-6xl sm:text-8xl opacity-50">
-                                    {product.id <= 3 ? '🧴' : product.id <= 6 ? '🧽' : product.id <= 10 ? '✨' : '🪑'}
+                            <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg overflow-hidden h-64 sm:h-80 lg:h-96 relative">
+                                {/* Display actual product image if available */}
+                                {product.image && product.image.startsWith('http') ? (
+                                    <img 
+                                        src={product.image} 
+                                        alt={product.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+                                
+                                {/* Emoji fallback */}
+                                <div 
+                                    className={`absolute inset-0 flex items-center justify-center bg-gray-700/20 ${
+                                        product.image && product.image.startsWith('http') ? 'hidden' : 'flex'
+                                    }`}
+                                >
+                                    <div className="text-6xl sm:text-8xl opacity-60">
+                                        {product.imageEmoji || product.image || '📦'}
+                                    </div>
                                 </div>
+                                
+                                {/* SQL Image Indicator */}
+                                {product.image && product.image.startsWith('http') && (
+                                    <div className="absolute top-4 right-4 bg-gray-600/60 rounded-full p-2">
+                                        <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Minimal Product Details */}
+                        {/* Professional Product Details */}
                         <div className="space-y-6">
                             {/* Product Header */}
                             <div>
                                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-light text-white mb-3 sm:mb-4 tracking-wide">
                                     {product.name}
                                 </h1>
-                                <div className="flex items-center gap-4 mb-4 sm:mb-6">
-                                    <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-full px-3 py-1 border border-white/10">
-                                        <span className="text-yellow-400 mr-2">⭐</span>
-                                        <span className="text-white font-medium text-sm">{product.rating}</span>
-                                        <span className="text-gray-400 ml-2 text-sm">({product.reviews})</span>
+                                {product.rating && (
+                                    <div className="flex items-center gap-4 mb-4 sm:mb-6">
+                                        <div className="flex items-center bg-gray-800/60 backdrop-blur-sm rounded-lg px-3 py-1 border border-gray-700/40">
+                                            <div className="flex items-center mr-2">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <svg 
+                                                        key={i} 
+                                                        className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-gray-400' : 'text-gray-600'}`} 
+                                                        fill="currentColor" 
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                            <span className="text-white font-medium text-sm">{product.rating}</span>
+                                            <span className="text-gray-400 ml-2 text-sm">({product.reviews})</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
+                                )}
+                                <p className="text-gray-400 leading-relaxed text-sm sm:text-base">
                                     {product.detailedDescription}
                                 </p>
                             </div>
 
-                            {/* Minimal Price and Add to Cart */}
-                            <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6">
+                            {/* Professional Price and Add to Cart */}
+                            <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg p-4 sm:p-6">
                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                                     <span className="text-2xl sm:text-3xl font-medium text-white">
                                         {product.price}
                                     </span>
                                     <div className="flex items-center space-x-3">
-                                        <label className="text-white font-medium text-sm">Qty:</label>
+                                        <label className="text-gray-300 font-medium text-sm">Qty:</label>
                                         <div className="flex items-center space-x-2">
                                             <button
                                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                                className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors border border-white/10"
+                                                className="w-8 h-8 bg-gray-700/40 hover:bg-gray-600/60 rounded flex items-center justify-center transition-colors border border-gray-600/50"
                                             >
                                                 <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -92,7 +142,7 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                             <span className="text-white font-medium w-8 text-center text-sm">{quantity}</span>
                                             <button
                                                 onClick={() => setQuantity(quantity + 1)}
-                                                className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors border border-white/10"
+                                                className="w-8 h-8 bg-gray-700/40 hover:bg-gray-600/60 rounded flex items-center justify-center transition-colors border border-gray-600/50"
                                             >
                                                 <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -103,19 +153,19 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                 </div>
                                 <button
                                     onClick={handleAddToCart}
-                                    className="w-full bg-gradient-to-r from-white/10 via-blue-500/10 to-white/10 hover:from-white/20 hover:via-blue-500/15 hover:to-white/20 text-white font-medium py-3 sm:py-4 px-6 rounded-xl transition-all duration-300 border border-white/10"
+                                    className="w-full bg-gray-700/40 hover:bg-gray-600/60 text-white font-medium py-3 sm:py-4 px-6 rounded transition-all duration-200 border border-gray-600/50 hover:border-gray-500/70"
                                 >
                                     Add to Cart - {product.price}
                                 </button>
                             </div>
 
-                            {/* Minimal Key Features */}
-                            <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 sm:p-6">
+                            {/* Professional Key Features */}
+                            <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg p-4 sm:p-6">
                                 <h3 className="text-lg sm:text-xl font-medium text-white mb-4">Features</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {product.features.map((feature, index) => (
                                         <div key={index} className="flex items-center text-gray-300 text-sm">
-                                            <div className="w-2 h-2 bg-blue-400 rounded-full mr-3 flex-shrink-0"></div>
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full mr-3 flex-shrink-0"></div>
                                             {feature}
                                         </div>
                                     ))}
@@ -124,11 +174,11 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                         </div>
                     </div>
 
-                    {/* Minimal Detailed Information Tabs */}
+                    {/* Professional Detailed Information Tabs */}
                     <div className="mt-12 lg:mt-16">
-                        <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden">
-                            {/* Minimal Tab Navigation */}
-                            <div className="flex flex-wrap border-b border-white/10">
+                        <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg overflow-hidden">
+                            {/* Professional Tab Navigation */}
+                            <div className="flex flex-wrap border-b border-gray-700/40">
                                 {[
                                     { id: 'overview', label: 'Overview' },
                                     { id: 'specifications', label: 'Specs' },
@@ -140,8 +190,8 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`px-4 sm:px-6 py-3 sm:py-4 font-medium text-sm sm:text-base transition-colors ${
                                             activeTab === tab.id
-                                                ? 'text-blue-400 bg-blue-500/10 border-b-2 border-blue-400'
-                                                : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                                ? 'text-white bg-gray-700/50 border-b-2 border-gray-400'
+                                                : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                                         }`}
                                     >
                                         {tab.label}
@@ -191,7 +241,7 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                 {activeTab === 'usage' && (
                                     <div>
                                         <h3 className="text-xl sm:text-2xl font-light text-white mb-6">Usage</h3>
-                                        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 sm:p-6">
+                                        <div className="bg-gray-700/30 border border-gray-600/40 rounded-lg p-4 sm:p-6">
                                             <p className="text-gray-300 leading-relaxed text-sm sm:text-base">
                                                 {product.usage}
                                             </p>

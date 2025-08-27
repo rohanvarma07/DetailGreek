@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 const Login = ({ onBack, onLogin }) => {
@@ -7,6 +7,15 @@ const Login = ({ onBack, onLogin }) => {
         password: ''
     });
     const [isLoading, setIsLoading] = useState(false);
+
+    // Scroll to top when Login component mounts
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

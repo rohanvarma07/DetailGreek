@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import apiService from '../services/apiService';
+import toast from 'react-hot-toast';
 
 const Portfolio = ({ onBack }) => {
-    const portfolioItems = [
+    const [portfolioItems, setPortfolioItems] = useState([]);
+    const [testimonials, setTestimonials] = useState([]);
+    const [stats, setStats] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    // Static fallback data
+    const staticPortfolioItems = [
         {
             id: 1,
             title: "Luxury Car Dealership - Premium Motors",
@@ -64,7 +72,7 @@ const Portfolio = ({ onBack }) => {
         }
     ];
 
-    const testimonials = [
+    const staticTestimonials = [
         {
             name: "Rajesh Kumar",
             company: "Premium Motors Ltd.",
@@ -84,6 +92,58 @@ const Portfolio = ({ onBack }) => {
             rating: 5
         }
     ];
+
+    // Fetch data from backend and scroll to top
+    useEffect(() => {
+        // Scroll to top when component mounts
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+
+        const fetchPortfolioData = async () => {
+            try {
+                setLoading(true);
+                
+                // Try to fetch from backend, fallback to static data
+                try {
+                    const [portfolioData, testimonialsData, statsData] = await Promise.allSettled([
+                        apiService.portfolio.getItems(),
+                        apiService.portfolio.getTestimonials(),
+                        apiService.portfolio.getStats()
+                    ]);
+
+                    // Use backend data if available, otherwise use static data
+                    setPortfolioItems(portfolioData.status === 'fulfilled' ? portfolioData.value : staticPortfolioItems);
+                    setTestimonials(testimonialsData.status === 'fulfilled' ? testimonialsData.value : staticTestimonials);
+                    setStats(statsData.status === 'fulfilled' ? statsData.value : {
+                        businessPartners: 50,
+                        vehiclesServiced: 10000,
+                        satisfactionRate: 98,
+                        supportAvailable: '24/7'
+                    });
+                } catch (backendError) {
+                    console.log('Backend not available, using static data');
+                    setPortfolioItems(staticPortfolioItems);
+                    setTestimonials(staticTestimonials);
+                    setStats({
+                        businessPartners: 50,
+                        vehiclesServiced: 10000,
+                        satisfactionRate: 98,
+                        supportAvailable: '24/7'
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to fetch portfolio data:', error);
+                toast.error('Failed to load portfolio data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPortfolioData();
+    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-gray-900 pt-20">
@@ -117,19 +177,27 @@ const Portfolio = ({ onBack }) => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 text-center">
-                            <div className="text-3xl font-bold text-blue-400 mb-2">50+</div>
+                            <div className="text-3xl font-bold text-blue-400 mb-2">
+                                {loading ? '...' : `${stats.businessPartners || 50}+`}
+                            </div>
                             <div className="text-gray-400 text-sm">Business Partners</div>
                         </div>
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 text-center">
-                            <div className="text-3xl font-bold text-teal-400 mb-2">10K+</div>
+                            <div className="text-3xl font-bold text-teal-400 mb-2">
+                                {loading ? '...' : `${Math.floor((stats.vehiclesServiced || 10000) / 1000)}K+`}
+                            </div>
                             <div className="text-gray-400 text-sm">Vehicles Serviced</div>
                         </div>
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 text-center">
-                            <div className="text-3xl font-bold text-violet-400 mb-2">98%</div>
+                            <div className="text-3xl font-bold text-violet-400 mb-2">
+                                {loading ? '...' : `${stats.satisfactionRate || 98}%`}
+                            </div>
                             <div className="text-gray-400 text-sm">Satisfaction Rate</div>
                         </div>
                         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 text-center">
-                            <div className="text-3xl font-bold text-amber-400 mb-2">24/7</div>
+                            <div className="text-3xl font-bold text-amber-400 mb-2">
+                                {loading ? '...' : stats.supportAvailable || '24/7'}
+                            </div>
                             <div className="text-gray-400 text-sm">Support Available</div>
                         </div>
                     </div>
@@ -149,7 +217,7 @@ const Portfolio = ({ onBack }) => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {portfolioItems.map((item) => (
+                        {(portfolioItems.length > 0 ? portfolioItems : staticPortfolioItems).map((item) => (
                             <div 
                                 key={item.id}
                                 className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 hover:border-white/20 transition-all duration-300 group"
@@ -219,7 +287,7 @@ const Portfolio = ({ onBack }) => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {testimonials.map((testimonial, index) => (
+                        {(testimonials.length > 0 ? testimonials : staticTestimonials).map((testimonial, index) => (
                             <div key={index} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6">
                                 <div className="flex items-center mb-4">
                                     {[...Array(testimonial.rating)].map((_, i) => (

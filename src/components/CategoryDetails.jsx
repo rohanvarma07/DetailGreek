@@ -1,22 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import ProductDetailView from './ProductDetailView';
+import { apiService } from '../services/apiService';
+import toast from 'react-hot-toast';
 
 const CategoryDetails = ({ category, onBack }) => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showProductDetail, setShowProductDetail] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [isBackendAvailable, setIsBackendAvailable] = useState(true);
     const { addToCart } = useCart();
 
-    if (!category) return null;
+    // Scroll to top when component mounts or category changes
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
+    }, [category]);
 
-    // Enhanced products data with more details
-    const products = {
+    // Scroll to top when returning from product detail view
+    useEffect(() => {
+        if (!showProductDetail) {
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, [showProductDetail]);
+
+    // Static fallback data with emoji images
+    const staticProductsData = {
         1: [ // Car Wash Products
             { 
                 id: 1, 
                 name: "Premium Car Shampoo", 
                 price: "₹2,499", 
-                image: "/api/placeholder/400/300", 
+                image: "🧴", // Emoji fallback
+                imageEmoji: "🧴",
                 description: "Professional grade car shampoo with pH neutral formula",
                 detailedDescription: "Our Premium Car Shampoo is specially formulated with advanced pH-neutral technology that gently removes dirt and grime while preserving your car's protective wax coating. Enriched with natural lubricants and foam boosters for a scratch-free wash experience.",
                 features: ["pH Neutral Formula", "Scratch-Free", "Biodegradable", "Concentrated Formula"],
@@ -40,7 +65,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 2, 
                 name: "Foam Cannon Soap", 
                 price: "₹1,999", 
-                image: "/api/placeholder/400/300", 
+                image: "🫧", // Emoji fallback
+                imageEmoji: "🫧",
                 description: "Thick foam formula for pressure washers",
                 detailedDescription: "Specially designed for foam cannons and pressure washers, this high-foaming formula creates thick, clingy foam that dwells on surfaces longer for superior cleaning power.",
                 features: ["High Foam", "Pressure Washer Compatible", "Long Dwell Time", "Safe on All Surfaces"],
@@ -64,7 +90,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 3, 
                 name: "Waterless Car Wash", 
                 price: "₹1,699", 
-                image: "/api/placeholder/400/300", 
+                image: "💧", // Emoji fallback
+                imageEmoji: "💧",
                 description: "Clean your car without water",
                 detailedDescription: "Revolutionary waterless wash formula that cleans, shines, and protects in one step. Perfect for quick touch-ups and eco-friendly washing.",
                 features: ["No Water Required", "Scratch-Free", "UV Protection", "Quick Application"],
@@ -90,7 +117,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 5, 
                 name: "Microfiber Towel Set", 
                 price: "₹2,999", 
-                image: "/api/placeholder/400/300", 
+                image: "🧽", // Emoji fallback
+                imageEmoji: "🧽",
                 description: "Professional grade microfiber towels",
                 detailedDescription: "Premium 380 GSM microfiber towels designed for professional detailing. Ultra-soft fibers safely lift dirt and debris while being gentle on all surfaces.",
                 features: ["380 GSM", "Lint-Free", "Scratch-Free", "Machine Washable"],
@@ -114,7 +142,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 6, 
                 name: "Detailing Brush Kit", 
                 price: "₹3,499", 
-                image: "/api/placeholder/400/300", 
+                image: "🖌️", // Emoji fallback
+                imageEmoji: "🖌️",
                 description: "Complete brush set for all surfaces",
                 detailedDescription: "Professional 8-piece brush kit with varying bristle softness for different surfaces. From delicate paint to tough wheel cleaning.",
                 features: ["8-Piece Set", "Various Bristle Types", "Ergonomic Handles", "Color Coded"],
@@ -140,7 +169,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 9, 
                 name: "Ceramic Coating", 
                 price: "₹8,999", 
-                image: "/api/placeholder/400/300", 
+                image: "🛡️", // Emoji fallback
+                imageEmoji: "🛡️",
                 description: "9H hardness ceramic protection",
                 detailedDescription: "Professional-grade ceramic coating that provides unmatched protection with 9H hardness. Creates a permanent bond with your paint for years of protection against UV rays, chemicals, and environmental contaminants.",
                 features: ["9H Hardness", "UV Protection", "Chemical Resistant", "5-Year Durability"],
@@ -164,7 +194,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 10, 
                 name: "Carnauba Wax", 
                 price: "₹4,599", 
-                image: "/api/placeholder/400/300", 
+                image: "✨", // Emoji fallback
+                imageEmoji: "✨",
                 description: "Premium Brazilian carnauba wax",
                 detailedDescription: "Grade #1 Brazilian carnauba wax provides deep, warm shine with excellent water beading. Hand-harvested from Copernicia prunifera palm trees.",
                 features: ["Grade #1 Carnauba", "Deep Gloss", "Water Repellent", "Natural Protection"],
@@ -190,7 +221,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 13, 
                 name: "Leather Conditioner", 
                 price: "₹2,699", 
-                image: "/api/placeholder/400/300", 
+                image: "🧴", // Emoji fallback
+                imageEmoji: "🧴",
                 description: "Keeps leather soft and supple",
                 detailedDescription: "Premium leather conditioner formulated with natural oils and UV protectants. Restores and maintains leather's natural softness while providing protection against cracking and fading.",
                 features: ["Natural Oils", "UV Protection", "Anti-Crack Formula", "Pleasant Scent"],
@@ -214,7 +246,8 @@ const CategoryDetails = ({ category, onBack }) => {
                 id: 14, 
                 name: "Fabric Protector", 
                 price: "₹2,199", 
-                image: "/api/placeholder/400/300", 
+                image: "🧽", // Emoji fallback
+                imageEmoji: "🧽",
                 description: "Repels stains and spills",
                 detailedDescription: "Advanced nano-technology fabric protector creates an invisible barrier against stains, spills, and UV damage on all fabric surfaces.",
                 features: ["Nano Protection", "Stain Resistant", "UV Blocking", "Breathable"],
@@ -237,7 +270,84 @@ const CategoryDetails = ({ category, onBack }) => {
         ]
     };
 
-    const categoryProducts = products[category.id] || [];
+    // Fetch products from backend when category changes
+    useEffect(() => {
+        const fetchProducts = async () => {
+            if (!category) return;
+            
+            setLoading(true);
+            setError(null);
+            
+            try {
+                const backendProducts = await apiService.products.getByCategory(category.name);
+                
+                if (backendProducts && backendProducts.length > 0) {
+                    // Transform backend products to match frontend structure
+                    const transformedProducts = backendProducts.map(product => {
+                        // Get emoji fallback based on category
+                        const getCategoryEmoji = (categoryId) => {
+                            switch(categoryId) {
+                                case 1: return '🧴'; // Car Wash Products
+                                case 2: return '🧽'; // Detailing Tools  
+                                case 3: return '✨'; // Protection Products
+                                case 4: return '🪑'; // Interior Care
+                                default: return '🛒';
+                            }
+                        };
+
+                        return {
+                            id: product.prodId,
+                            name: product.prodName,
+                            price: `₹${product.prodPrice}`,
+                            description: product.prodDescription,
+                            detailedDescription: product.prodDescription || 'Professional quality product for your car care needs.',
+                            image: product.imgUrl ? `http://localhost:9090${product.imgUrl}` : getCategoryEmoji(product.category?.categoryId || category.id),
+                            imageEmoji: getCategoryEmoji(product.category?.categoryId || category.id),
+                            features: ['Professional Grade', 'High Quality', 'Easy to Use', 'Durable'],
+                            specifications: {
+                            "Stock Status": product.prodQuantity > 0 ? 'In Stock' : 'Out of Stock',
+                            "Quantity Available": product.prodQuantity.toString(),
+                            "Product ID": product.prodId.toString(),
+                            "Category": product.category ? product.category.categoryName : category.name
+                            },
+                            benefits: [
+                            'Premium quality ingredients',
+                            'Long-lasting results',
+                            'Professional grade formula',
+                            'Safe for all vehicle types'
+                            ],
+                            usage: 'Follow product instructions for best results. Test on small area first.',
+                            rating: 4.5 + (Math.random() * 0.4), // Random rating between 4.5-4.9
+                            reviews: Math.floor(Math.random() * 150) + 25, // Random reviews 25-175
+                            quantity: product.prodQuantity,
+                            categoryId: product.category ? product.category.categoryId : null,
+                            categoryName: product.category ? product.category.categoryName : null
+                        };
+                    });
+                    
+                    setProducts(transformedProducts);
+                    setIsBackendAvailable(true);
+                } else {
+                    // No products found, use static data
+                    setProducts(staticProductsData[category.id] || []);
+                    setIsBackendAvailable(false);
+                }
+            } catch (error) {
+                // Silently fallback to static data
+                setProducts(staticProductsData[category.id] || []);
+                setError(null); // Don't show error to user
+                setIsBackendAvailable(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, [category]);
+
+    const categoryProducts = products;
+
+    if (!category) return null;
 
     const handleProductClick = (product) => {
         setSelectedProduct(product);
@@ -255,7 +365,9 @@ const CategoryDetails = ({ category, onBack }) => {
             name: product.name,
             price: product.price,
             description: product.description,
-            features: product.features
+            features: product.features,
+            image: product.image,
+            imageEmoji: product.imageEmoji
         });
     };
 
@@ -272,115 +384,272 @@ const CategoryDetails = ({ category, onBack }) => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black relative overflow-hidden">
-            {/* Floating Car Emojis Background */}
+            {/* Enhanced Background Pattern */}
             <div className="absolute inset-0 pointer-events-none">
-                {/* Large floating cars */}
-                <div className="absolute top-10 left-10 text-6xl opacity-10 blur-sm animate-bounce" style={{animationDelay: '0s', animationDuration: '6s'}}>🚗</div>
-                <div className="absolute top-32 right-20 text-5xl opacity-15 blur-sm animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}>🚙</div>
-                <div className="absolute top-64 left-1/4 text-4xl opacity-20 blur-sm animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}>🚕</div>
-                <div className="absolute top-80 right-1/3 text-6xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '3s', animationDuration: '7s'}}>🏎️</div>
-                <div className="absolute bottom-32 left-16 text-5xl opacity-15 blur-sm animate-bounce" style={{animationDelay: '4s', animationDuration: '6s'}}>🚘</div>
-                <div className="absolute bottom-20 right-10 text-4xl opacity-20 blur-sm animate-pulse" style={{animationDelay: '5s', animationDuration: '5s'}}>🚖</div>
-                <div className="absolute top-1/2 left-10 text-3xl opacity-25 blur-sm animate-bounce" style={{animationDelay: '1.5s', animationDuration: '4s'}}>🚌</div>
-                <div className="absolute top-1/3 right-1/4 text-5xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '2.5s', animationDuration: '6s'}}>🚐</div>
+                {/* Geometric Pattern */}
+                <div className="absolute inset-0 opacity-[0.02]" style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3Ccircle cx='37' cy='37' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                }}>
+                </div>
                 
-                {/* Mobile responsive smaller cars */}
-                <div className="hidden sm:block absolute top-96 left-1/2 text-4xl opacity-15 blur-sm animate-bounce" style={{animationDelay: '3.5s', animationDuration: '5s'}}>🛻</div>
-                <div className="hidden md:block absolute bottom-1/2 right-16 text-6xl opacity-10 blur-sm animate-pulse" style={{animationDelay: '4.5s', animationDuration: '7s'}}>🚗</div>
-                <div className="hidden lg:block absolute top-20 left-1/3 text-3xl opacity-20 blur-sm animate-bounce" style={{animationDelay: '5.5s', animationDuration: '4s'}}>🚙</div>
+                {/* Premium Floating Elements */}
+                <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-500/5 via-cyan-500/3 to-indigo-500/5 rounded-full blur-xl animate-pulse" style={{animationDelay: '0s', animationDuration: '8s'}}></div>
+                <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-violet-500/5 via-purple-500/3 to-pink-500/5 rounded-full blur-xl animate-pulse" style={{animationDelay: '2s', animationDuration: '6s'}}></div>
+                <div className="absolute bottom-40 left-1/4 w-40 h-40 bg-gradient-to-br from-emerald-500/5 via-teal-500/3 to-cyan-500/5 rounded-full blur-xl animate-pulse" style={{animationDelay: '4s', animationDuration: '10s'}}></div>
+                <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-gradient-to-br from-orange-500/5 via-amber-500/3 to-yellow-500/5 rounded-full blur-xl animate-pulse" style={{animationDelay: '6s', animationDuration: '7s'}}></div>
             </div>
 
-            {/* Main Content */}
-            <div className="relative z-10 py-4 sm:py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Minimal Header with Back Button */}
-                    <div className="flex items-center justify-between mb-6 sm:mb-8">
+            {/* Main Content with Professional Spacing */}
+            <div className="relative z-10 pt-20 sm:pt-24 lg:pt-28 pb-6 sm:pb-10 lg:pb-14">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+                    {/* Professional Header Section */}
+                    <div className="flex items-center justify-between mb-6 sm:mb-10 lg:mb-14">
                         <button
                             onClick={onBack}
-                            className="flex items-center text-blue-400 hover:text-blue-300 transition-all duration-300 group bg-white/5 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10 hover:bg-white/10"
+                            className="group flex items-center bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-lg px-4 py-2 hover:bg-gray-700/80 hover:border-gray-600/60 transition-all duration-200"
                         >
-                            <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 mr-2 text-gray-400 group-hover:text-gray-300 group-hover:-translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
-                            <span className="text-sm font-medium">Back</span>
+                            <span className="text-gray-300 text-sm font-medium group-hover:text-white transition-colors duration-200">Back to Categories</span>
                         </button>
                         
-                        {/* Category emoji indicator */}
-                        <div className="text-2xl opacity-60">
-                            {category.id === 1 ? '🧽' : category.id === 2 ? '🛠️' : category.id === 3 ? '🛡️' : '🪑'}
+                        {/* Professional Category Badge */}
+                        <div className="flex items-center bg-gray-800/60 backdrop-blur-sm border border-gray-700/40 rounded-lg px-3 py-2">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full mr-3"></div>
+                            <span className="text-gray-300 text-sm font-medium">{categoryProducts.length} Products</span>
                         </div>
                     </div>
 
-                    {/* Minimal Category Header */}
-                    <div className="text-center mb-8 sm:mb-12">
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-3 sm:mb-4 tracking-wide">
-                            {category.name}
-                        </h1>
-                        <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto font-light">
-                            {category.description}
-                        </p>
+                    {/* Professional Category Header */}
+                    <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+                        <div className="max-w-4xl mx-auto">
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white mb-4 sm:mb-6 tracking-tight leading-tight">
+                                <span className="block opacity-95">{category.name}</span>
+                            </h1>
+                            <div className="w-16 h-px bg-gray-500 mx-auto mb-4 sm:mb-6"></div>
+                            <p className="text-base sm:text-lg lg:text-xl text-gray-400 font-normal leading-relaxed max-w-3xl mx-auto">
+                                {category.description}
+                            </p>
+                        </div>
                     </div>
 
-                    {/* Minimal Products Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {categoryProducts.map((product) => (
-                            <div
-                                key={product.id}
-                                className="group bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:from-white/8 hover:via-blue-500/8 hover:to-cyan-500/8 transition-all duration-300 cursor-pointer"
-                                onClick={() => handleProductClick(product)}
-                            >
-                                {/* Simple Product Image Area */}
-                                <div className="h-48 bg-gradient-to-br from-white/5 via-blue-400/10 to-cyan-400/10 flex items-center justify-center">
-                                    <div className="text-5xl opacity-50">
-                                        {product.id <= 3 ? '🧴' : product.id <= 6 ? '🧽' : product.id <= 10 ? '✨' : '🪑'}
+                    {/* Professional Loading State */}
+                    {loading && (
+                        <div className="flex items-center justify-center py-20 sm:py-32">
+                            <div className="relative">
+                                {/* Main Loading Container */}
+                                <div className="bg-gray-800/40 backdrop-blur-sm border border-gray-700/30 rounded-xl p-12 sm:p-16 max-w-lg mx-auto">
+                                    {/* Professional Loading Animation */}
+                                    <div className="relative flex items-center justify-center mb-8">
+                                        {/* Single rotating ring */}
+                                        <div className="w-12 h-12 border-2 border-gray-600 border-t-gray-400 rounded-full animate-spin"></div>
                                     </div>
-                                </div>
-
-                                {/* Simple Product Info */}
-                                <div className="p-6">
-                                    <h3 className="text-lg font-medium text-white mb-2 line-clamp-1">
-                                        {product.name}
-                                    </h3>
-                                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                                        {product.description}
-                                    </p>
                                     
-                                    {/* Price and Simple Button */}
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-xl font-medium text-white">
-                                            {product.price}
-                                        </span>
-                                        <button 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAddToCart(product);
-                                            }}
-                                            className="bg-gradient-to-r from-white/10 via-blue-500/10 to-white/10 hover:from-white/20 hover:via-blue-500/15 hover:to-white/20 text-white py-2 px-4 rounded-xl transition-all duration-300 text-sm border border-white/10"
-                                        >
-                                            Add
-                                        </button>
+                                    {/* Professional Loading Text */}
+                                    <div className="text-center space-y-4">
+                                        <h3 className="text-xl sm:text-2xl font-medium text-white">
+                                            Loading Products
+                                        </h3>
+                                        <p className="text-gray-400 text-base">
+                                            Fetching {category.name.toLowerCase()}...
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
+                    )}
 
-                    {/* Simple Empty State */}
-                    {categoryProducts.length === 0 && (
-                        <div className="text-center py-16">
-                            <div className="bg-gradient-to-br from-white/5 via-blue-500/5 to-cyan-500/5 backdrop-blur-md border border-white/10 rounded-2xl p-12 max-w-md mx-auto">
-                                <div className="text-4xl mb-4 opacity-50">🚧</div>
-                                <h3 className="text-xl font-medium text-white mb-3">
-                                    Coming Soon
-                                </h3>
-                                <p className="text-gray-400 text-sm">
-                                    New products arriving soon
-                                </p>
+                    {/* Professional Error State */}
+                    {error && !loading && (
+                        <div className="mb-6 p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg backdrop-blur-sm">
+                            <div className="flex items-center gap-3">
+                                <div className="text-gray-400">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p className="text-gray-300 text-sm font-medium">Connection Issue</p>
+                                    <p className="text-gray-500 text-xs">Showing cached data instead</p>
+                                </div>
                             </div>
+                        </div>
+                    )}
+
+                    {/* Enhanced Professional Products Grid */}
+                    {!loading && (
+                        <div className="space-y-10">
+                            {/* Clean Products Grid with Better Spacing */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {categoryProducts.map((product, index) => (
+                                    <div
+                                        key={product.id}
+                                        className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg overflow-hidden hover:bg-gray-800/50 hover:border-gray-600/60 transition-all duration-200 cursor-pointer hover:scale-[1.01]"
+                                        onClick={() => handleProductClick(product)}
+                                        style={{
+                                            animationDelay: `${index * 0.1}s`,
+                                            animation: 'slideInUp 0.6s ease-out forwards'
+                                        }}
+                                    >
+                                        {/* Professional Product Image Area */}
+                                        <div className="relative h-40 sm:h-44 bg-gray-700/20 overflow-hidden">
+                                            {/* Image Container */}
+                                            {product.image && product.image.startsWith('http') ? (
+                                                <img 
+                                                    src={product.image} 
+                                                    alt={product.name}
+                                                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                        e.target.nextSibling.style.display = 'flex';
+                                                    }}
+                                                />
+                                            ) : null}
+                                            
+                                            {/* Professional Emoji Fallback */}
+                                            <div 
+                                                className={`absolute inset-0 flex items-center justify-center bg-gray-700/10 ${
+                                                    product.image && product.image.startsWith('http') ? 'hidden' : 'flex'
+                                                }`}
+                                            >
+                                                <div className="text-4xl sm:text-5xl opacity-60 group-hover:opacity-80 transition-opacity duration-200">
+                                                    {product.imageEmoji || product.image || '�'}
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Professional SQL Image Indicator */}
+                                            {product.image && product.image.startsWith('http') && (
+                                                <div className="absolute top-3 right-3 bg-gray-600/60 rounded-full p-1">
+                                                    <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Subtle Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 via-transparent to-transparent"></div>
+                                        </div>
+
+                                        {/* Professional Product Info Section */}
+                                        <div className="p-5 space-y-4">
+                                            {/* Product Title - Clean and Professional */}
+                                            <div className="space-y-2">
+                                                <h3 className="text-lg font-medium text-white group-hover:text-gray-200 transition-colors duration-200 leading-tight line-clamp-1">
+                                                    {product.name}
+                                                </h3>
+                                                <p className="text-gray-400 text-sm leading-relaxed line-clamp-1 group-hover:text-gray-300 transition-colors duration-200">
+                                                    {product.description}
+                                                </p>
+                                            </div>
+                                            
+                                            {/* Professional Rating (if available) */}
+                                            {product.rating && (
+                                                <div className="flex items-center space-x-1">
+                                                    <div className="flex items-center">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <svg 
+                                                                key={i} 
+                                                                className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-gray-400' : 'text-gray-600'}`} 
+                                                                fill="currentColor" 
+                                                                viewBox="0 0 20 20"
+                                                            >
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                            </svg>
+                                                        ))}
+                                                    </div>
+                                                    <span className="text-gray-500 text-xs">({product.reviews})</span>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Professional Price and Action Section */}
+                                            <div className="flex items-center justify-between pt-3 border-t border-gray-700/40">
+                                                <div>
+                                                    <span className="text-xl font-medium text-white group-hover:text-gray-200 transition-colors duration-200">
+                                                        {product.price}
+                                                    </span>
+                                                </div>
+                                                
+                                                <button 
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleAddToCart(product);
+                                                    }}
+                                                    className="group/btn bg-gray-700/40 hover:bg-gray-600/60 border border-gray-600/50 hover:border-gray-500/70 text-white py-2 px-4 rounded transition-all duration-200 text-sm font-medium"
+                                                >
+                                                    <span className="flex items-center space-x-1">
+                                                        <span>Add</span>
+                                                        <svg className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Professional Empty State */}
+                            {categoryProducts.length === 0 && (
+                                <div className="text-center py-20 sm:py-32">
+                                    <div className="max-w-md mx-auto">
+                                        <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg p-12 sm:p-16">
+                                            {/* Professional Icon */}
+                                            <div className="relative mb-8">
+                                                <div className="text-4xl mb-4 opacity-50">
+                                                    {error ? '�' : '📦'}
+                                                </div>
+                                            </div>
+                                            
+                                            <h3 className="text-xl sm:text-2xl font-medium text-white mb-4">
+                                                {error ? 'No Products Available' : 'Coming Soon'}
+                                            </h3>
+                                            <p className="text-gray-400 text-base leading-relaxed mb-6">
+                                                {error ? 'Unable to load products at this time' : 'New products arriving soon'}
+                                            </p>
+                                            
+                                            {/* Professional Action Button */}
+                                            <button 
+                                                onClick={onBack}
+                                                className="bg-gray-700/40 hover:bg-gray-600/60 border border-gray-600/50 hover:border-gray-500/70 text-white py-3 px-6 rounded transition-all duration-200 text-sm font-medium"
+                                            >
+                                                Browse Other Categories
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
             </div>
+            
+            {/* CSS Animations */}
+            <style jsx>{`
+                @keyframes slideInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                
+                .line-clamp-1 {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                }
+                
+                .line-clamp-2 {
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 2;
+                }
+            `}</style>
         </div>
     );
 };

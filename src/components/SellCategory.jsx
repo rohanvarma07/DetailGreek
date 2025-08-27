@@ -1,38 +1,86 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import carWash from "../assets/car-wash.png";
 import detail from "../assets/detal.png";
+import { apiService } from "../services/apiService";
 
 const SellCategory = ({ onCategoryClick }) => {
-    const categories = [
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Default categories with fallback images
+    const defaultCategories = [
         {
             id: 1,
             name: "Car Wash Products",
             description: "High-quality car wash products for a spotless shine.",
             image: carWash,
+            imageUrl: null, // Will be populated from backend
             items: ["Shampoos", "Soaps", "Cleaners", "Degreasers"]
         },
         {
             id: 2,
             name: "Detailing Tools",
             description: "Professional tools for perfect car detailing results.",
-            image: carWash, // You can replace with different images
+            image: detail,
+            imageUrl: null, // Will be populated from backend
             items: ["Microfiber Towels", "Brushes", "Applicators", "Buckets"]
         },
         {
             id: 3,
             name: "Protection Products",
             description: "Advanced protection for paint, interior, and more.",
-            image: carWash, // You can replace with different images
+            image: carWash,
+            imageUrl: null, // Will be populated from backend
             items: ["Wax", "Sealants", "Ceramic Coatings", "UV Protection"]
         },
         {
             id: 4,
             name: "Interior Care",
             description: "Keep your car's interior looking and feeling fresh.",
-            image: carWash, // You can replace with different images
+            image: detail,
+            imageUrl: null, // Will be populated from backend
             items: ["Leather Care", "Fabric Cleaners", "Dashboard Care", "Air Fresheners"]
         }
     ];
+
+    // Fetch categories with images from backend
+    useEffect(() => {
+        const fetchCategoriesWithImages = async () => {
+            try {
+                // Try to fetch categories from backend
+                const backendCategories = await apiService.categories.getAll();
+                
+                if (backendCategories && backendCategories.length > 0) {
+                    // Map backend categories to frontend structure
+                    const mappedCategories = defaultCategories.map(defaultCat => {
+                        const backendCat = backendCategories.find(
+                            bc => bc.categoryId === defaultCat.id || 
+                                  bc.categoryName === defaultCat.name
+                        );
+                        
+                        return {
+                            ...defaultCat,
+                            imageUrl: backendCat?.imageUrl ? 
+                                `http://localhost:9090${backendCat.imageUrl}` : null,
+                            description: backendCat?.description || defaultCat.description
+                        };
+                    });
+                    
+                    setCategories(mappedCategories);
+                } else {
+                    // Use default categories if no backend data
+                    setCategories(defaultCategories);
+                }
+            } catch (error) {
+                // Silently fall back to default categories
+                setCategories(defaultCategories);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCategoriesWithImages();
+    }, []);
 
     const handleCategoryClick = (cat) => {
         if (onCategoryClick) {
@@ -53,23 +101,45 @@ const SellCategory = ({ onCategoryClick }) => {
                     </p>
                 </div>
 
+                {/* Loading State */}
+                {loading && (
+                    <div className="text-center py-16">
+                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-md mx-auto">
+                            <div className="animate-spin w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+                            <p className="text-gray-300 text-sm">Loading categories...</p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Categories Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-                    {categories.map((cat) => (
-                        <div 
-                            key={cat.id}
-                            onClick={() => handleCategoryClick(cat)}
-                            className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
-                        >
-                            {/* Category Image */}
-                            <div className="relative overflow-hidden rounded-xl mb-6">
-                                <img 
-                                    src={detail} 
-                                    alt={cat.name} 
-                                    className="w-full h-48 sm:h-40 lg:h-48 object-cover transition-transform duration-300 group-hover:scale-110" 
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                            </div>
+                {!loading && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                        {categories.map((cat) => (
+                            <div 
+                                key={cat.id}
+                                onClick={() => handleCategoryClick(cat)}
+                                className="group bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 cursor-pointer hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
+                            >
+                                {/* Category Image */}
+                                <div className="relative overflow-hidden rounded-xl mb-6">
+                                    <img 
+                                        src={cat.imageUrl || cat.image} 
+                                        alt={cat.name}
+                                        className="w-full h-48 sm:h-40 lg:h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                                        onError={(e) => {
+                                            // Fallback to default image if backend image fails to load
+                                            e.target.src = cat.image;
+                                        }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                    
+                                    {/* Image Source Indicator */}
+                                    {cat.imageUrl && (
+                                        <div className="absolute top-2 right-2 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-full px-2 py-1">
+                                            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                        </div>
+                                    )}
+                                </div>
 
                             {/* Category Content */}
                             <div className="space-y-4">
@@ -108,24 +178,27 @@ const SellCategory = ({ onCategoryClick }) => {
                         </div>
                     ))}
                 </div>
+                )}
 
                 {/* Call to Action */}
-                <div className="text-center mt-16">
-                    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-4xl mx-auto">
-                        <h3 className="text-2xl font-bold text-white mb-4">
-                            Can't Find What You're Looking For?
-                        </h3>
-                        <p className="text-gray-300 mb-6">
-                            Contact our experts to help you find the perfect products for your specific car care needs.
-                        </p>
-                        <button className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-xl hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-cyan-500/20 hover:border-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/20">
-                            Contact Expert
-                        </button>
+                {!loading && (
+                    <div className="text-center mt-16">
+                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-4xl mx-auto">
+                            <h3 className="text-2xl font-bold text-white mb-4">
+                                Can't Find What You're Looking For?
+                            </h3>
+                            <p className="text-gray-300 mb-6">
+                                Contact our experts to help you find the perfect products for your specific car care needs.
+                            </p>
+                            <button className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-xl hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-cyan-500/20 hover:border-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/20">
+                                Contact Expert
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default SellCategory;    

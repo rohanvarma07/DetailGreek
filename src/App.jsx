@@ -12,6 +12,7 @@ import Cart from './components/Cart'
 import About from './components/About'
 import Login from './components/Login'
 import Portfolio from './components/Portfolio'
+import apiService from './services/apiService'
 
 function App() {
   const [currentView, setCurrentView] = useState('home'); // 'home', 'cart', 'about', 'category', 'login', or 'portfolio'
@@ -41,41 +42,60 @@ function App() {
   }, []);
 
   const showCart = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setCurrentView('cart');
   };
 
   const showHome = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setCurrentView('home');
     setSelectedCategory(null);
   };
 
   const showAbout = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setCurrentView('about');
   };
 
   const showLogin = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setCurrentView('login');
   };
 
   const showPortfolio = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setCurrentView('portfolio');
   };
 
   const showCategoryDetails = (category) => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setSelectedCategory(category);
     setCurrentView('category');
   };
 
-  const handleLogin = (email) => {
-    const userData = { email };
-    setUser(userData);
-    localStorage.setItem('dg-user', JSON.stringify(userData));
-    setCurrentView('home'); // Redirect to home after login
+  const handleLogin = async (email, password) => {
+    try {
+      const response = await apiService.auth.login({ email, password });
+      const userData = response.user || { email };
+      setUser(userData);
+      localStorage.setItem('dg-user', JSON.stringify(userData));
+      setCurrentView('home'); // Redirect to home after login
+      return response;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('dg-user');
+  const handleLogout = async () => {
+    try {
+      await apiService.auth.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      localStorage.removeItem('dg-user');
+    }
   };
 
   const handleGetStarted = () => {
@@ -226,39 +246,9 @@ function App() {
             </div>
           </>
         ) : currentView === 'cart' ? (
-          <div>
-            <div className="pt-20 pb-4">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <button 
-                  onClick={showHome}
-                  className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors mb-4"
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back to Shop
-                </button>
-              </div>
-            </div>
-            <Cart onBackToShop={showHome} />
-          </div>
+          <Cart onBackToShop={showHome} />
         ) : currentView === 'category' ? (
-          <div>
-            <div className="pt-20 pb-4">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <button 
-                  onClick={showHome}
-                  className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors mb-4"
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back to Categories
-                </button>
-              </div>
-            </div>
-            <CategoryDetails category={selectedCategory} onBack={showHome} />
-          </div>
+          <CategoryDetails category={selectedCategory} onBack={showHome} />
         ) : currentView === 'login' ? (
           <Login onBack={showHome} onLogin={handleLogin} />
         ) : currentView === 'portfolio' ? (
