@@ -20,10 +20,12 @@ function App() {
   const [user, setUser] = useState(null); // User authentication state
   const [isFirstVisit, setIsFirstVisit] = useState(false); // Track if it's user's first visit
 
-  // Load user from localStorage on component mount
+  // Load user and view state from localStorage on component mount
   useEffect(() => {
     const savedUser = localStorage.getItem('dg-user');
     const hasVisited = localStorage.getItem('dg-visited');
+    const savedView = localStorage.getItem('dg-current-view');
+    const savedCategory = localStorage.getItem('dg-selected-category');
     
     if (savedUser) {
       try {
@@ -34,12 +36,42 @@ function App() {
       }
     }
     
+    // Restore the previous view and category if they exist
+    if (savedView && savedView !== 'home') {
+      setCurrentView(savedView);
+      
+      // If returning to category view, restore the selected category
+      if (savedView === 'category' && savedCategory) {
+        try {
+          setSelectedCategory(JSON.parse(savedCategory));
+        } catch (error) {
+          console.error('Error parsing saved category:', error);
+          localStorage.removeItem('dg-selected-category');
+          setCurrentView('home'); // Fallback to home if category can't be restored
+        }
+      }
+    }
+    
     // Check if it's user's first visit
     if (!hasVisited) {
       setIsFirstVisit(true);
       localStorage.setItem('dg-visited', 'true');
     }
   }, []);
+
+  // Save current view to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('dg-current-view', currentView);
+  }, [currentView]);
+
+  // Save selected category to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedCategory) {
+      localStorage.setItem('dg-selected-category', JSON.stringify(selectedCategory));
+    } else {
+      localStorage.removeItem('dg-selected-category');
+    }
+  }, [selectedCategory]);
 
   const showCart = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
@@ -50,6 +82,9 @@ function App() {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setCurrentView('home');
     setSelectedCategory(null);
+    // Clear saved view state when explicitly going home
+    localStorage.removeItem('dg-current-view');
+    localStorage.removeItem('dg-selected-category');
   };
 
   const showAbout = () => {
@@ -79,7 +114,11 @@ function App() {
       const userData = response.user || { email };
       setUser(userData);
       localStorage.setItem('dg-user', JSON.stringify(userData));
-      setCurrentView('home'); // Redirect to home after login
+      // Clear view state and redirect to home after login
+      localStorage.removeItem('dg-current-view');
+      localStorage.removeItem('dg-selected-category');
+      setCurrentView('home');
+      setSelectedCategory(null);
       return response;
     } catch (error) {
       console.error('Login failed:', error);
@@ -95,6 +134,11 @@ function App() {
     } finally {
       setUser(null);
       localStorage.removeItem('dg-user');
+      // Also clear view state on logout
+      localStorage.removeItem('dg-current-view');
+      localStorage.removeItem('dg-selected-category');
+      setCurrentView('home');
+      setSelectedCategory(null);
     }
   };
 

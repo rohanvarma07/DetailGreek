@@ -282,8 +282,12 @@ const CategoryDetails = ({ category, onBack }) => {
                 const backendProducts = await apiService.products.getByCategory(category.name);
                 
                 if (backendProducts && backendProducts.length > 0) {
+                    console.log('🔍 Backend returned products:', backendProducts);
+                    
                     // Transform backend products to match frontend structure
                     const transformedProducts = backendProducts.map(product => {
+                        console.log('📝 Processing product:', product.prodName, 'imgUrl:', product.imgUrl);
+                        
                         // Get emoji fallback based on category
                         const getCategoryEmoji = (categoryId) => {
                             switch(categoryId) {
@@ -295,13 +299,20 @@ const CategoryDetails = ({ category, onBack }) => {
                             }
                         };
 
+                        // Construct image URL with debugging
+                        const fullImageUrl = product.imgUrl ? `http://localhost:9090${product.imgUrl}` : null;
+                        console.log('🖼️ Product:', product.prodName);
+                        console.log('   - Raw imgUrl:', product.imgUrl);
+                        console.log('   - Full URL:', fullImageUrl);
+                        console.log('   - Will use backend image:', !!fullImageUrl);
+
                         return {
                             id: product.prodId,
                             name: product.prodName,
                             price: `₹${product.prodPrice}`,
                             description: product.prodDescription,
                             detailedDescription: product.prodDescription || 'Professional quality product for your car care needs.',
-                            image: product.imgUrl ? `http://localhost:9090${product.imgUrl}` : getCategoryEmoji(product.category?.categoryId || category.id),
+                            image: fullImageUrl || getCategoryEmoji(product.category?.categoryId || category.id),
                             imageEmoji: getCategoryEmoji(product.category?.categoryId || category.id),
                             features: ['Professional Grade', 'High Quality', 'Easy to Use', 'Durable'],
                             specifications: {
@@ -327,6 +338,82 @@ const CategoryDetails = ({ category, onBack }) => {
                     
                     setProducts(transformedProducts);
                     setIsBackendAvailable(true);
+                    
+                    // Test first image URL for CORS issues
+                    const firstImageProduct = transformedProducts.find(p => p.image && p.image.startsWith('http'));
+                    if (firstImageProduct) {
+                        console.log('🧪 Testing image accessibility:', firstImageProduct.image);
+                        
+                        // Test with fetch to check if CORS is configured properly
+                        fetch(firstImageProduct.image, { method: 'HEAD' })
+                            .then(response => {
+                                if (response.ok) {
+                                    console.log('✅ Image accessible via fetch');
+                                } else {
+                                    console.warn('⚠️ Image fetch returned:', response.status, response.statusText);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('❌ Image fetch failed - possible CORS issue:', error.message);
+                            });
+                    }
+                    
+                    // Test all image URLs individually and preload them
+                    console.log('🔍 Testing all product images...');
+                    const imageUrls = [];
+                    transformedProducts.forEach((product, index) => {
+                        if (product.image && product.image.startsWith('http')) {
+                            imageUrls.push(product.image);
+                            
+                            // Test individual image loading
+                            const testImg = new Image();
+                            testImg.onload = () => console.log(`✅ Image ${index + 1} (${product.name}) loads successfully`);
+                            testImg.onerror = () => console.error(`❌ Image ${index + 1} (${product.name}) failed to load: ${product.image}`);
+                            testImg.src = product.image;
+                        } else {
+                            console.log(`😀 Product ${index + 1} (${product.name}) using emoji fallback`);
+                        }
+                    });
+                    
+                    // Performance monitoring for image loading
+                    const startTime = performance.now();
+                    let loadedImages = 0;
+                    const totalImages = imageUrls.length;
+                    
+                    if (totalImages > 0) {
+                        imageUrls.forEach((url) => {
+                            const perfImg = new Image();
+                            perfImg.onload = () => {
+                                loadedImages++;
+                                if (loadedImages === totalImages) {
+                                    const endTime = performance.now();
+                                    console.log(`🏁 All ${totalImages} images loaded in ${(endTime - startTime).toFixed(2)}ms`);
+                                    console.log(`⚡ Average: ${((endTime - startTime) / totalImages).toFixed(2)}ms per image`);
+                                }
+                            };
+                            perfImg.src = url;
+                        });
+                    }
+                    
+                    // Preload images for better performance
+                    if (imageUrls.length > 0) {
+                        console.log('🚀 Preloading', imageUrls.length, 'images...');
+                        imageUrls.forEach((url, index) => {
+                            // Create preload link element
+                            const link = document.createElement('link');
+                            link.rel = 'preload';
+                            link.as = 'image';
+                            link.href = url;
+                            document.head.appendChild(link);
+                            
+                            // Clean up after some time
+                            setTimeout(() => {
+                                if (link.parentNode) {
+                                    link.parentNode.removeChild(link);
+                                }
+                            }, 30000); // Remove after 30 seconds
+                        });
+                    }
                 } else {
                     // No products found, use static data
                     setProducts(staticProductsData[category.id] || []);
@@ -492,31 +579,62 @@ const CategoryDetails = ({ category, onBack }) => {
                                             animation: 'slideInUp 0.6s ease-out forwards'
                                         }}
                                     >
-                                        {/* Professional Product Image Area */}
+                                        {/* Professional Product Image Area with Loading State */}
                                         <div className="relative h-40 sm:h-44 bg-gray-700/20 overflow-hidden">
-                                            {/* Image Container */}
-                                            {product.image && product.image.startsWith('http') ? (
-                                                <img 
-                                                    src={product.image} 
-                                                    alt={product.name}
-                                                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
-                                                    onError={(e) => {
-                                                        e.target.style.display = 'none';
-                                                        e.target.nextSibling.style.display = 'flex';
-                                                    }}
-                                                />
-                                            ) : null}
+                                            {/* Loading skeleton */}
+                                            <div className="absolute inset-0 bg-gradient-to-r from-gray-700/20 via-gray-600/20 to-gray-700/20 animate-pulse"></div>
                                             
-                                            {/* Professional Emoji Fallback */}
-                                            <div 
-                                                className={`absolute inset-0 flex items-center justify-center bg-gray-700/10 ${
-                                                    product.image && product.image.startsWith('http') ? 'hidden' : 'flex'
-                                                }`}
-                                            >
-                                                <div className="text-4xl sm:text-5xl opacity-60 group-hover:opacity-80 transition-opacity duration-200">
-                                                    {product.imageEmoji || product.image || '�'}
+                                            {/* Image Container - Optimized for faster loading */}
+                                            {product.image && product.image.startsWith('http') ? (
+                                                <>
+                                                    <img 
+                                                        src={product.image} 
+                                                        alt={product.name}
+                                                        loading="lazy"
+                                                        decoding="async"
+                                                        className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                                                        style={{
+                                                            backgroundColor: '#374151', // Gray fallback color while loading
+                                                        }}
+                                                        onLoad={(e) => {
+                                                            console.log('✅ Image loaded successfully:', e.target.src);
+                                                            // Hide the emoji fallback when image loads
+                                                            const fallbackDiv = e.target.parentElement.querySelector('.emoji-fallback');
+                                                            if (fallbackDiv) {
+                                                                fallbackDiv.style.display = 'none';
+                                                            }
+                                                            // Add loaded class for smooth transition
+                                                            e.target.style.opacity = '1';
+                                                        }}
+                                                        onError={(e) => {
+                                                            console.error('❌ Image failed to load:', e.target.src);
+                                                            console.error('Error event:', e.type);
+                                                            // Hide the failed image and show emoji fallback
+                                                            e.target.style.display = 'none';
+                                                            const fallbackDiv = e.target.parentElement.querySelector('.emoji-fallback');
+                                                            if (fallbackDiv) {
+                                                                fallbackDiv.style.display = 'flex';
+                                                            }
+                                                        }}
+                                                        onLoadStart={() => {
+                                                            console.log('📡 Started loading:', product.image);
+                                                        }}
+                                                    />
+                                                    {/* Emoji Fallback for failed backend images */}
+                                                    <div className="emoji-fallback absolute inset-0 flex items-center justify-center bg-gray-700/10" style={{display: 'none'}}>
+                                                        <div className="text-4xl sm:text-5xl opacity-60 group-hover:opacity-80 transition-opacity duration-200">
+                                                            {product.imageEmoji || '🛒'}
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                /* Direct emoji fallback for products without backend images */
+                                                <div className="emoji-fallback absolute inset-0 flex items-center justify-center bg-gray-700/10">
+                                                    <div className="text-4xl sm:text-5xl opacity-60 group-hover:opacity-80 transition-opacity duration-200">
+                                                        {product.imageEmoji || product.image || '🛒'}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
                                             
                                             {/* Professional SQL Image Indicator */}
                                             {product.image && product.image.startsWith('http') && (
@@ -524,6 +642,18 @@ const CategoryDetails = ({ category, onBack }) => {
                                                     <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                                                 </div>
                                             )}
+                                            
+                                            {/* Debug Badge - More detailed */}
+                                            <div 
+                                                className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded cursor-help"
+                                                title={product.image && product.image.startsWith('http') ? product.image : 'Using emoji fallback'}
+                                            >
+                                                {product.image && product.image.startsWith('http') ? (
+                                                    <span className="text-green-300">🌐 IMG</span>
+                                                ) : (
+                                                    <span className="text-yellow-300">😀 EMJ</span>
+                                                )}
+                                            </div>
                                             
                                             {/* Subtle Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 via-transparent to-transparent"></div>

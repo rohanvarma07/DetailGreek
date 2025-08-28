@@ -4,7 +4,14 @@ A modern car care e-commerce application with React frontend and Spring Boot bac
 
 ## 🚀 Latest Updates
 
-### ✅ Project Cleanup & Optimization (Latest)
+### ✅ View Persistence & Navigation Fix (Latest)
+- **Page Reload Fix**: Application now preserves current view when page is reloaded
+- **Smart State Management**: Uses localStorage to remember current page (Cart, Category, About, etc.)
+- **Category Memory**: Remembers selected category when returning to category details
+- **Seamless UX**: Users stay on the same page after refreshing instead of being redirected to home
+- **Login/Logout Handling**: Automatically clears saved view state during authentication changes
+
+### ✅ Project Cleanup & Optimization
 - **Removed Unused Files**: Cleaned up all empty debug and test components
 - **Optimized Structure**: Removed unused utilities, hooks, and empty directories  
 - **Build Artifacts**: Cleaned dist folder (auto-regenerated on build)
@@ -282,3 +289,79 @@ Frontend categories are mapped to backend category names:
 - ✅ No breaking changes to your current backend
 
 The application is production-ready with or without the category backend implementation!
+
+## 🔧 Technical Features
+
+### View Persistence System
+The application implements a sophisticated view persistence system that maintains user navigation state across page reloads:
+
+**Key Components:**
+- **State Management**: Uses React useState with localStorage synchronization
+- **Automatic Saving**: Current view and category selection are automatically saved to localStorage
+- **Smart Restoration**: On app load, restores the previous view and selected category
+- **Authentication Integration**: Clears saved state during login/logout for security
+
+**localStorage Keys:**
+- `dg-current-view`: Stores current view ('home', 'cart', 'about', 'category', 'login', 'portfolio')
+- `dg-selected-category`: Stores selected category object when in category view
+- `dg-user`: Stores user authentication data
+- `dg-visited`: Tracks if user has visited before
+
+**User Experience:**
+- Navigate to Cart → Reload page → Stay on Cart page
+- Browse Category → Reload page → Return to same category
+- Login/Logout → Automatically clear saved state and return to home
+- Explicit home navigation → Clear saved state
+
+```javascript
+// Example: View persistence implementation
+useEffect(() => {
+  const savedView = localStorage.getItem('dg-current-view');
+  const savedCategory = localStorage.getItem('dg-selected-category');
+  
+  if (savedView && savedView !== 'home') {
+    setCurrentView(savedView);
+    if (savedView === 'category' && savedCategory) {
+      setSelectedCategory(JSON.parse(savedCategory));
+    }
+  }
+}, []);
+```
+
+### Backend Integration
+- **API Endpoints Currently Used**: 
+  - `GET /api/products` - Fetch all products (fallback)
+  - `GET /api/products/category/{categoryName}` - Fetch products by category *(planned)*
+  - `GET /api/products/{id}` - Get product by ID
+  - `POST /api/products` - Create new product (with file upload)
+  - `PUT /api/products/{id}` - Update product
+  - `DELETE /api/products/{id}` - Delete product
+
+- **Data Mapping**: Your backend model (`products`) maps to frontend as:
+  ```javascript
+  // Backend Model (Current)
+  {
+    prod_id: number,
+    prod_name: string,
+    prod_description: string,
+    prod_price: BigInteger,
+    prod_quantity: number,
+    img_url: string
+  }
+
+  // Frontend Transformation
+  {
+    id: product.prod_id,
+    name: product.prod_name,
+    description: product.prod_description,
+    price: `₹${product.prod_price}`,
+    quantity: product.prod_quantity,
+    image: product.img_url || '/api/placeholder/400/300'
+  }
+  ```
+
+- **Category Mapping**: Frontend categories are mapped to backend category names:
+  - "Car Wash Products" → `car_wash`
+  - "Detailing Tools" → `detailing_tools`
+  - "Protection Products" → `protection`
+  - "Interior Care" → `interior_care`
