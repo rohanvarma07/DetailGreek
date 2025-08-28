@@ -55,7 +55,7 @@ const Cart = ({ onBackToShop }) => {
                 'Safe for all vehicle types'
             ],
             usage: item.usage || 'Follow product instructions for best results. Test on small area first.',
-            rating: item.rating || 4.5 + (Math.random() * 0.4),
+            rating: item.rating || Math.round((4.5 + (Math.random() * 0.4)) * 10) / 10, // Random rating between 4.5-4.9, rounded to 1 decimal
             reviews: item.reviews || Math.floor(Math.random() * 150) + 25,
             quantity: item.quantity
         };

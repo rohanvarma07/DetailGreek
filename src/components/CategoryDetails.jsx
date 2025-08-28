@@ -317,7 +317,7 @@ const CategoryDetails = ({ category, onBack }) => {
                             'Safe for all vehicle types'
                             ],
                             usage: 'Follow product instructions for best results. Test on small area first.',
-                            rating: 4.5 + (Math.random() * 0.4), // Random rating between 4.5-4.9
+                            rating: Math.round((4.5 + (Math.random() * 0.4)) * 10) / 10, // Random rating between 4.5-4.9, rounded to 1 decimal
                             reviews: Math.floor(Math.random() * 150) + 25, // Random reviews 25-175
                             quantity: product.prodQuantity,
                             categoryId: product.category ? product.category.categoryId : null,
@@ -406,18 +406,18 @@ const CategoryDetails = ({ category, onBack }) => {
                     <div className="flex items-center justify-between mb-6 sm:mb-10 lg:mb-14">
                         <button
                             onClick={onBack}
-                            className="group flex items-center bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-lg px-4 py-2 hover:bg-gray-700/80 hover:border-gray-600/60 transition-all duration-200"
+                            className="group flex items-center bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-sm border border-blue-500/30 rounded-lg px-4 py-2 hover:from-blue-600/30 hover:to-indigo-600/30 hover:border-blue-400/50 transition-all duration-200"
                         >
-                            <svg className="w-4 h-4 mr-2 text-gray-400 group-hover:text-gray-300 group-hover:-translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 mr-2 text-blue-300 group-hover:text-blue-200 group-hover:-translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
-                            <span className="text-gray-300 text-sm font-medium group-hover:text-white transition-colors duration-200">Back to Categories</span>
+                            <span className="text-blue-200 text-sm font-medium group-hover:text-white transition-colors duration-200">Back to Categories</span>
                         </button>
                         
                         {/* Professional Category Badge */}
-                        <div className="flex items-center bg-gray-800/60 backdrop-blur-sm border border-gray-700/40 rounded-lg px-3 py-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full mr-3"></div>
-                            <span className="text-gray-300 text-sm font-medium">{categoryProducts.length} Products</span>
+                        <div className="flex items-center bg-gradient-to-r from-emerald-600/20 to-teal-600/20 backdrop-blur-sm border border-emerald-500/30 rounded-lg px-3 py-2">
+                            <div className="w-2 h-2 bg-emerald-400 rounded-full mr-3 animate-pulse"></div>
+                            <span className="text-emerald-200 text-sm font-medium">{categoryProducts.length} Products</span>
                         </div>
                     </div>
 
@@ -427,7 +427,7 @@ const CategoryDetails = ({ category, onBack }) => {
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-light text-white mb-4 sm:mb-6 tracking-tight leading-tight">
                                 <span className="block opacity-95">{category.name}</span>
                             </h1>
-                            <div className="w-16 h-px bg-gray-500 mx-auto mb-4 sm:mb-6"></div>
+                            <div className="w-16 h-px bg-gradient-to-r from-transparent via-blue-400/60 to-transparent mx-auto mb-4 sm:mb-6"></div>
                             <p className="text-base sm:text-lg lg:text-xl text-gray-400 font-normal leading-relaxed max-w-3xl mx-auto">
                                 {category.description}
                             </p>
@@ -443,7 +443,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                     {/* Professional Loading Animation */}
                                     <div className="relative flex items-center justify-center mb-8">
                                         {/* Single rotating ring */}
-                                        <div className="w-12 h-12 border-2 border-gray-600 border-t-gray-400 rounded-full animate-spin"></div>
+                                        <div className="w-12 h-12 border-2 border-gray-600 border-t-blue-400 rounded-full animate-spin"></div>
                                     </div>
                                     
                                     {/* Professional Loading Text */}
@@ -462,16 +462,16 @@ const CategoryDetails = ({ category, onBack }) => {
 
                     {/* Professional Error State */}
                     {error && !loading && (
-                        <div className="mb-6 p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg backdrop-blur-sm">
+                        <div className="mb-6 p-4 bg-gradient-to-r from-amber-600/10 to-orange-600/10 border border-amber-500/30 rounded-lg backdrop-blur-sm">
                             <div className="flex items-center gap-3">
-                                <div className="text-gray-400">
+                                <div className="text-amber-400">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-gray-300 text-sm font-medium">Connection Issue</p>
-                                    <p className="text-gray-500 text-xs">Showing cached data instead</p>
+                                    <p className="text-amber-200 text-sm font-medium">Connection Issue</p>
+                                    <p className="text-amber-300/70 text-xs">Showing cached data instead</p>
                                 </div>
                             </div>
                         </div>
@@ -485,7 +485,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                 {categoryProducts.map((product, index) => (
                                     <div
                                         key={product.id}
-                                        className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700/40 rounded-lg overflow-hidden hover:bg-gray-800/50 hover:border-gray-600/60 transition-all duration-200 cursor-pointer hover:scale-[1.01]"
+                                        className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-900/40 backdrop-blur-sm border border-gray-700/40 hover:border-blue-500/40 rounded-lg overflow-hidden hover:from-gray-800/60 hover:via-gray-700/50 hover:to-gray-800/60 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10"
                                         onClick={() => handleProductClick(product)}
                                         style={{
                                             animationDelay: `${index * 0.1}s`,
@@ -520,8 +520,8 @@ const CategoryDetails = ({ category, onBack }) => {
                                             
                                             {/* Professional SQL Image Indicator */}
                                             {product.image && product.image.startsWith('http') && (
-                                                <div className="absolute top-3 right-3 bg-gray-600/60 rounded-full p-1">
-                                                    <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                                                <div className="absolute top-3 right-3 bg-gradient-to-r from-blue-500/60 to-indigo-500/60 rounded-full p-1">
+                                                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
                                                 </div>
                                             )}
                                             
@@ -548,7 +548,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                                         {[...Array(5)].map((_, i) => (
                                                             <svg 
                                                                 key={i} 
-                                                                className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-gray-400' : 'text-gray-600'}`} 
+                                                                className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-amber-400' : 'text-gray-600'}`} 
                                                                 fill="currentColor" 
                                                                 viewBox="0 0 20 20"
                                                             >
@@ -556,6 +556,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                                             </svg>
                                                         ))}
                                                     </div>
+                                                    <span className="text-amber-300 text-xs font-medium">{product.rating.toFixed(1)}</span>
                                                     <span className="text-gray-500 text-xs">({product.reviews})</span>
                                                 </div>
                                             )}
@@ -563,7 +564,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                             {/* Professional Price and Action Section */}
                                             <div className="flex items-center justify-between pt-3 border-t border-gray-700/40">
                                                 <div>
-                                                    <span className="text-xl font-medium text-white group-hover:text-gray-200 transition-colors duration-200">
+                                                    <span className="text-xl font-medium text-white group-hover:text-blue-100 transition-colors duration-200">
                                                         {product.price}
                                                     </span>
                                                 </div>
@@ -573,7 +574,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                                         e.stopPropagation();
                                                         handleAddToCart(product);
                                                     }}
-                                                    className="group/btn bg-gray-700/40 hover:bg-gray-600/60 border border-gray-600/50 hover:border-gray-500/70 text-white py-2 px-4 rounded transition-all duration-200 text-sm font-medium"
+                                                    className="group/btn bg-gradient-to-r from-blue-600/40 to-indigo-600/40 hover:from-blue-600/60 hover:to-indigo-600/60 border border-blue-500/50 hover:border-blue-400/70 text-white py-2 px-4 rounded transition-all duration-200 text-sm font-medium hover:shadow-lg hover:shadow-blue-500/20"
                                                 >
                                                     <span className="flex items-center space-x-1">
                                                         <span>Add</span>
@@ -610,7 +611,7 @@ const CategoryDetails = ({ category, onBack }) => {
                                             {/* Professional Action Button */}
                                             <button 
                                                 onClick={onBack}
-                                                className="bg-gray-700/40 hover:bg-gray-600/60 border border-gray-600/50 hover:border-gray-500/70 text-white py-3 px-6 rounded transition-all duration-200 text-sm font-medium"
+                                                className="bg-gradient-to-r from-blue-600/40 to-indigo-600/40 hover:from-blue-600/60 hover:to-indigo-600/60 border border-blue-500/50 hover:border-blue-400/70 text-white py-3 px-6 rounded transition-all duration-200 text-sm font-medium hover:shadow-lg hover:shadow-blue-500/20"
                                             >
                                                 Browse Other Categories
                                             </button>
