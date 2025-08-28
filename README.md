@@ -5,10 +5,21 @@ A modern car care e-commerce application with React frontend and Spring Boot bac
 ## 🚀 Latest Updates
 
 ### ✅ Project Cleanup & Optimization (Latest)
-- **Removed Unused Files**: Cleaned up empty debug and test components
-- **Optimized Structure**: Removed unused utilities and empty directories
-- **Build Artifacts**: Cleaned dist folder (regenerated on build)
-- **File Cleanup**: Removed 10+ unused/empty files for better maintainability
+- **Removed Unused Files**: Cleaned up all empty debug and test components
+- **Optimized Structure**: Removed unused utilities, hooks, and empty directories  
+- **Build Artifacts**: Cleaned dist folder (auto-regenerated on build)
+- **File Cleanup**: Removed 10+ unused/empty files:
+  - `src/components/ConnectionStatus.jsx`
+  - `src/components/DebugBackendConnection.jsx`  
+  - `src/components/ImageTest.jsx`
+  - `src/components/SimpleProductTest.jsx`
+  - `src/services/api.js`
+  - `src/hooks/useAPI.js`
+  - `src/utils/imageUtils.js`
+  - `src/utils/networkDiagnostic.js`
+  - `backend-package.json`, `test-backend.js`, `image-test.html`
+  - Empty `hooks/` and `utils/` directories
+- **Verified Build**: All imports verified, build successful after cleanup
 
 ### ✅ Professional UI Enhancement
 - **Minimal Color Palette**: Added subtle blue, emerald, and amber accents
@@ -46,6 +57,42 @@ Port: 3001          Port: 9090
 - Java 17+
 - MySQL Database
 - Spring Boot backend running on localhost:9090
+
+## 📁 Project Structure (Clean)
+
+```
+DG/
+├── src/
+│   ├── components/          # React components
+│   │   ├── About.jsx
+│   │   ├── Cart.jsx
+│   │   ├── CategoryDetails.jsx
+│   │   ├── Footer.jsx
+│   │   ├── Header.jsx
+│   │   ├── hero.jsx
+│   │   ├── Login.jsx
+│   │   ├── Portfolio.jsx
+│   │   ├── ProductDetailView.jsx
+│   │   ├── ProductShowCase.jsx
+│   │   ├── ProductShowCaseWrapper.jsx
+│   │   └── SellCategory.jsx
+│   ├── context/             # React context
+│   │   └── CartContext.jsx
+│   ├── services/            # API services
+│   │   └── apiService.js
+│   ├── assets/              # Static assets
+│   │   ├── car-wash.png
+│   │   └── detal.png
+│   ├── App.jsx              # Main app component
+│   ├── App.css              # App styles
+│   ├── main.jsx             # Entry point
+│   └── index.css            # Global styles
+├── BACKEND_INTEGRATION.md   # Backend integration guide
+├── README.md                # This file
+├── package.json             # Dependencies
+├── vite.config.js           # Vite configuration
+└── eslint.config.js         # ESLint configuration
+```
 
 ## Frontend Setup
 
