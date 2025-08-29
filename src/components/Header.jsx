@@ -118,7 +118,7 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, o
                 {/* Mobile Login/User Button */}
                 {user ? (
                   <div className="flex items-center space-x-1">
-                    <span className="text-xs text-blue-400 font-medium">{user.email.split('@')[0]}</span>
+                    <span className="text-xs text-blue-400 font-medium">{user.firstName || user.email.split('@')[0]}</span>
                     <button 
                       onClick={onLogout}
                       className="px-2 py-1 text-xs text-gray-400 hover:text-red-400 font-medium transition-colors duration-200"
@@ -162,7 +162,7 @@ const Header = ({ title = "Detail Greek", onShowCart, onShowAbout, onShowHome, o
               <div className="flex items-center space-x-2 lg:space-x-3">
                 {user ? (
                   <div className="flex items-center space-x-3">
-                    <span className="text-sm text-blue-400 font-medium">Welcome, {user.email.split('@')[0]}</span>
+                    <span className="text-sm text-blue-400 font-medium">Welcome, {user.firstName || user.email.split('@')[0]}</span>
                     <button 
                       onClick={onLogout}
                       className="px-3 py-2 text-sm lg:text-base text-gray-300 hover:text-red-400 font-medium transition-colors duration-200"

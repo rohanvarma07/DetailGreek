@@ -105,37 +105,85 @@ export const apiService = {
   // Authentication
   auth: {
     login: async (credentials) => {
-      const response = await apiClient.post('/auth/login', credentials);
-      
-      // Store auth token if provided
-      if (response.token) {
-        localStorage.setItem('dg-auth-token', response.token);
-        localStorage.setItem('dg-user', JSON.stringify(response.user));
+      try {
+        console.log('🔐 Attempting login with:', credentials.email);
+        const response = await apiClient.post('/auth/login', {
+          email: credentials.email,
+          password: credentials.password
+        });
+        
+        console.log('✅ Login successful:', response);
+        
+        // Store user data if login successful
+        if (response.success && response.user) {
+          localStorage.setItem('dg-user', JSON.stringify(response.user));
+          console.log('💾 User data saved to localStorage');
+        }
+        
+        return response;
+      } catch (error) {
+        console.error('❌ Login failed:', error.message);
+        throw new Error(error.message || 'Login failed. Please check your credentials.');
       }
-      
-      return response;
     },
 
-    register: async (userData) => {
-      return await apiClient.post('/auth/register', userData);
+    signup: async (signupData) => {
+      try {
+        console.log('📝 Attempting signup with:', { 
+          email: signupData.email, 
+          firstName: signupData.firstName, 
+          lastName: signupData.lastName 
+        });
+        
+        const response = await apiClient.post('/auth/signup', {
+          email: signupData.email,
+          password: signupData.password,
+          firstName: signupData.firstName,
+          lastName: signupData.lastName
+        });
+        
+        console.log('✅ Signup successful:', response);
+        return response;
+      } catch (error) {
+        console.error('❌ Signup failed:', error.message);
+        throw new Error(error.message || 'Sign up failed. Please try again.');
+      }
+    },
+
+    checkEmail: async (email) => {
+      try {
+        const response = await apiClient.get(`/auth/check-email/${encodeURIComponent(email)}`);
+        return response;
+      } catch (error) {
+        console.error('❌ Email check failed:', error.message);
+        return { emailTaken: false }; // Default to available on error
+      }
+    },
+
+    changePassword: async (passwordData) => {
+      try {
+        const response = await apiClient.post('/auth/change-password', passwordData);
+        return response;
+      } catch (error) {
+        console.error('❌ Password change failed:', error.message);
+        throw new Error(error.message || 'Failed to change password.');
+      }
     },
 
     logout: async () => {
       try {
-        await apiClient.post('/auth/logout');
-      } finally {
-        // Clear local storage regardless of API response
-        localStorage.removeItem('dg-auth-token');
+        // Clear local storage
         localStorage.removeItem('dg-user');
+        localStorage.removeItem('dg-auth-token');
+        console.log('👋 User logged out successfully');
+        return { success: true };
+      } catch (error) {
+        console.error('❌ Logout error:', error.message);
+        // Clear storage anyway
+        localStorage.removeItem('dg-user');
+        localStorage.removeItem('dg-auth-token');
+        return { success: true };
       }
-    },
-
-    verifyToken: async () => {
-      return await apiClient.get('/auth/verify');
-    },
-
-    refreshToken: async () => {
-      return await apiClient.post('/auth/refresh');
     }
   },
 

@@ -48,7 +48,7 @@ function App() {
           console.error('Error parsing saved category:', error);
           localStorage.removeItem('dg-selected-category');
           setCurrentView('home'); // Fallback to home if category can't be restored
-        }
+        }0
       }
     }
     
