@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import carWash from "../assets/car-wash.png";
 import detail from "../assets/detal.png";
 import { apiService } from "../services/apiService";
+import ContactExpertModal from './ContactExpertModal';
 
 const SellCategory = ({ onCategoryClick }) => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
     // Default categories with fallback images
     const defaultCategories = [
@@ -185,18 +187,27 @@ const SellCategory = ({ onCategoryClick }) => {
                     <div className="text-center mt-16">
                         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-4xl mx-auto">
                             <h3 className="text-2xl font-bold text-white mb-4">
-                                Can't Find What You're Looking For?
+                                Are You Looking for A Car
                             </h3>
                             <p className="text-gray-300 mb-6">
-                                Contact our experts to help you find the perfect products for your specific car care needs.
+                                Contact our experts to help you find the perfect car for your specific budget and needs.
                             </p>
-                            <button className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-xl hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-cyan-500/20 hover:border-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/20">
+                            <button 
+                                onClick={() => setIsContactModalOpen(true)}
+                                className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-xl hover:from-emerald-500/20 hover:via-teal-500/20 hover:to-cyan-500/20 hover:border-white/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-500/20"
+                            >
                                 Contact Expert
                             </button>
                         </div>
                     </div>
                 )}
             </div>
+            
+            {/* Contact Expert Modal */}
+            <ContactExpertModal 
+                isOpen={isContactModalOpen} 
+                onClose={() => setIsContactModalOpen(false)} 
+            />
         </section>
     );
 };

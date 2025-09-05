@@ -4,13 +4,10 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [quantity, setQuantity] = useState(1);
 
-    // Scroll to top when component mounts or product changes
+    // Don't scroll to top when component mounts - let user stay at current position
     useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth'
-        });
+        // Remove auto-scroll to maintain user's current scroll position
+        // User can manually scroll if needed
     }, [product]);
 
     const handleAddToCart = () => {
@@ -58,9 +55,19 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                         <div className="space-y-4">
                             <div className="bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-900/40 backdrop-blur-sm border border-gray-700/40 hover:border-blue-500/30 rounded-lg overflow-hidden h-64 sm:h-80 lg:h-96 relative transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
                                 {/* Display actual product image if available */}
-                                {product.image && product.image.startsWith('http') ? (
+                                {product.image && product.image !== '/uploads/' && !product.image.startsWith('http') ? (
                                     <img 
-                                        src={product.image} 
+                                        src={`http://localhost:9090${product.image}`}
+                                        alt={product.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : product.image && product.image.startsWith('http') ? (
+                                    <img 
+                                        src={product.image}
                                         alt={product.name}
                                         className="w-full h-full object-cover"
                                         onError={(e) => {
@@ -73,7 +80,7 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                 {/* Emoji fallback */}
                                 <div 
                                     className={`absolute inset-0 flex items-center justify-center bg-gray-700/20 ${
-                                        product.image && product.image.startsWith('http') ? 'hidden' : 'flex'
+                                        product.image && product.image !== '/uploads/' ? 'hidden' : 'flex'
                                     }`}
                                 >
                                     <div className="text-6xl sm:text-8xl opacity-60">
@@ -81,8 +88,8 @@ const ProductDetailView = ({ product, onBack, onAddToCart }) => {
                                     </div>
                                 </div>
                                 
-                                {/* SQL Image Indicator */}
-                                {product.image && product.image.startsWith('http') && (
+                                {/* Backend Image Indicator */}
+                                {product.image && product.image !== '/uploads/' && (
                                     <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-500/60 to-indigo-500/60 rounded-full p-2">
                                         <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                                     </div>

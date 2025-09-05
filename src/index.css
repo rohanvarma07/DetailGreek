@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Swiper Styles */
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
+
   html {
     background: linear-gradient(to bottom right, rgb(15 23 42), rgb(17 24 39), rgb(24 24 27));
     min-height: 100vh;

@@ -90,12 +90,9 @@ const mapCategoryName = (frontendCategoryName) => {
 // Connection status checker
 export const checkBackendConnection = async () => {
   try {
-    console.log('🔍 Testing backend connection...');
     const response = await apiClient.get('/products');
-    console.log(`✅ Backend connected - Found ${response.length} products`);
     return true;
   } catch (error) {
-    console.error('❌ Backend connection failed:', error.message);
     return false;
   }
 };
